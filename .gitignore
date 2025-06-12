@@ -23,3 +23,17 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
+
+# For the .idea directory in the root
+/.idea/
+
+# Or if you want to ignore .idea directories anywhere in the project
+.idea/
+
+# You can also ignore specific files
+.idea/workspace.xml
+.idea/tasks.xml
