@@ -2,6 +2,8 @@
 
 namespace App\Controller\Api;
 
+use App\Service\FileUploader;
+use App\Service\SevenZipExtractor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,17 +18,21 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/backups')]
 class BackupsController extends AbstractController
 {
-    private string $maxFileSizeUpload;
     private ValidatorInterface $validator;
+    private string $maxFileSizeUpload;
+    private string $compressedFileDirectory;
+    private string $decompressedFileDirectory;
 
     public function __construct(ParameterBagInterface $parameterBag, ValidatorInterface $validator)
     {
-        $this->maxFileSizeUpload = $parameterBag->get('max_file_size_upload');
         $this->validator = $validator;
+        $this->maxFileSizeUpload = $parameterBag->get('max_file_size_upload');
+        $this->compressedFileDirectory = $parameterBag->get('compressed_file_upload_dir');
+        $this->decompressedFileDirectory = $parameterBag->get('decompressed_file_upload_dir');
     }
 
     #[Route('/upload', name: 'api_backups_upload_file', methods: ['POST'])]
-    public function uploadBackupData(Request $request): JsonResponse
+    public function uploadBackupData(Request $request, FileUploader $fileUploader, SevenZipExtractor $extractor): JsonResponse
     {
         $uploadedFile = $request->files->get('file');
         if (!$uploadedFile) {
@@ -52,14 +58,18 @@ class BackupsController extends AbstractController
             foreach ($violations as $violation) {
                 $errors[] = $violation->getMessage();
             }
-
             return $this->json([
                 'errors' => $errors
             ], Response::HTTP_BAD_REQUEST);
         }
-        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-        dump($originalFilename);
-        die;
-        return $this->json('OK');
+        // upload the file
+        $fileName = $fileUploader->upload($uploadedFile);
+        // extract uploaded file
+        $uploadedFilePath =  $this->compressedFileDirectory. '/' . $fileName;
+        $result = $extractor->extract($uploadedFilePath, $this->decompressedFileDirectory);
+
+        return $this->json([
+            'message' => 'File uploaded successfully'
+        ], Response::HTTP_OK);
     }
 }
