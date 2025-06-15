@@ -2,26 +2,19 @@
 
 namespace App\Commands;
 
-use Doctrine\DBAL\Connection;
-use Psr\Log\LoggerInterface;
+use App\Service\DataLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
 
 class ExecuteSqlCommand extends Command
 {
-    protected static $defaultName = 'app:import-sql-script';
+    public static $defaultName = 'app:import-sql-script';
 
-    public function __construct(
-        private Connection      $connection,
-        private Filesystem      $filesystem,
-        private LoggerInterface $logger,
-        private string          $targetDirectory
-    )
+    public function __construct(private Filesystem $filesystem, private DataLoader $dataLoader, private string $targetDirectory)
     {
         parent::__construct();
     }
@@ -57,59 +50,16 @@ class ExecuteSqlCommand extends Command
         }
         // Get database connection parameters from Doctrine
         $io->text("Executing SQL file: {$filename} ...");;
-        $result = $this->executePgRestore($filePath);
+        try {
+            $result = $this->dataLoader->executePsql($filename);
+        }catch (\Exception $e) {
+            $io->error($e->getMessage());
+            return Command::FAILURE;
+        }
         $io->success('SQL file executed successfully ');
 
         return Command::SUCCESS;
     }
 
-    private function executePgRestore(string $filePath): array
-    {
-        $params = $this->connection->getParams();
-        $host = $params['host'] ?? 'localhost';
-        $port = $params['port'] ?? 5432;
-        $dbname = $params['dbname'] ?? '';
-        $user = $params['user'] ?? '';
-        $password = $params['password'] ?? '';
-        $command = [
-            'psql',
-            '-h', $host,
-            '-p', (string)$port,
-            '-U', $user,
-            '-d', $dbname,
-            '-f', $filePath
-        ];
-
-        $process = new Process($command, null, null, null, null);
-        $process->setTimeout(null);
-        $env = $process->getEnv();
-        $env['PGPASSWORD'] = $password;
-        $process->setEnv($env);
-
-        $this->logger->info('Executing pg_restore', [
-            'file' => $filePath,
-            'database' => $dbname,
-            'host' => $host,
-            'port' => $port,
-            'user' => $user
-        ]);
-
-        $process->mustRun();
-        $output = $process->getOutput();
-        $errorOutput = $process->getErrorOutput();
-
-        $this->logger->info('pg_restore completed successfully', [
-            'file' => $filePath,
-            'exit_code' => $process->getExitCode()
-        ]);
-
-        return [
-            'success' => true,
-            'method' => 'pg_restore',
-            'output' => $output,
-            'error_output' => $errorOutput,
-            'exit_code' => $process->getExitCode()
-        ];
-    }
 
 }

@@ -47,7 +47,7 @@ class SevenZipExtractor
                     }
                     // Extract the file
                     $entry->extractTo($destination);
-                    $extractedFiles[] = $outputPath;
+                    $extractedFiles[$entry->getPath()] = $outputPath;
                 }
             }
 

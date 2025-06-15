@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Commands\ExecuteSqlCommand;
 use App\Service\FileUploader;
 use App\Service\SevenZipExtractor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -9,6 +10,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -67,6 +69,10 @@ class BackupsController extends AbstractController
         // extract uploaded file
         $uploadedFilePath =  $this->compressedFileDirectory. '/' . $fileName;
         $result = $extractor->extract($uploadedFilePath, $this->decompressedFileDirectory);
+        $decompressedFileName = array_key_first($result['files']);
+        // run load data command
+        $process = new Process(['php', 'bin/console', ExecuteSqlCommand::$defaultName, $decompressedFileName]);
+        $process->start();
 
         return $this->json([
             'message' => 'File uploaded successfully'
