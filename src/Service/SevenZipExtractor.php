@@ -27,12 +27,10 @@ class SevenZipExtractor
         if (!$this->filesystem->exists($archiveFilePath)) {
             throw new \InvalidArgumentException("Archive file does not exist: {$archiveFilePath}");
         }
-
         $destination = $destinationPath ?: $this->targetDirectory;
         if (!$this->filesystem->exists($destination)) {
             $this->filesystem->mkdir($destination);
         }
-
         try {
             $archive = new Archive7z($archiveFilePath);
             // Get a list of files in the archive

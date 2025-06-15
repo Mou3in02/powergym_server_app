@@ -4,10 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    uploads_directory: '%kernel.project_dir%/src/uploads'
     max_file_size_upload: '%env(MAX_FILE_SIZE_UPLOAD)%'
     compressed_file_extensions: '%env(COMPRESSED_FILE_EXTENSIONS)%'
     decompressed_file_extensions: '%env(DECOMPRESSED_FILE_EXTENSIONS)%'
+    # directories paths
+    uploads_directory: '%kernel.project_dir%/src/uploads'
     compressed_file_upload_dir: '%kernel.project_dir%/src/uploads/compressed'
     decompressed_file_upload_dir: '%kernel.project_dir%/src/uploads/decompressed'
 
@@ -34,5 +35,9 @@ services:
             $targetDirectory: '%compressed_file_upload_dir%'
 
     App\Service\SevenZipExtractor:
+        arguments:
+            $targetDirectory: '%decompressed_file_upload_dir%'
+
+    App\Commands\ExecuteSqlCommand:
         arguments:
             $targetDirectory: '%decompressed_file_upload_dir%'
