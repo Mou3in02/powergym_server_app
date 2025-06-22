@@ -15,10 +15,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
-class ExecuteSqlExportCommand extends Command
+class ExecuteSQLExportCommand extends Command
 {
     public static $defaultName = 'app:export-sql-script';
-
     private Connection $mainDB;
     private Connection $tmpDB;
     private LoggerInterface $logger;
@@ -63,12 +62,12 @@ class ExecuteSqlExportCommand extends Command
         $timestamp = (new DateTime())->getTimestamp();
         foreach ($tablesNames as $tableName) {
             if ($tableName === 'pers_person') {
-                $io->text("Exporting tmp data from <fg=magenta>{$tableName}</> table");
+                $io->text("Exporting tmp data from <fg=magenta>{$tableName}</> table ...");
                 try {
                     $this->exportTmpTable($tableName, $timestamp);
                 } catch (Exception $e) {
                     $io->error('Error exporting data from ' . $tableName . ' table');
-                    $io->error($e->getMessage());
+                    $this->logger->error($e->getMessage());
                     return Command::FAILURE;
                 }
             }

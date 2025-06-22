@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Service\DataLoader;
 use App\Service\FileUploader;
 use App\Service\SevenZipExtractor;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -72,8 +73,8 @@ class BackupsController extends AbstractController
         $decompressedFilePath = $this->decompressedFileDirectory . '/' . $decompressedFileName;
         // run load data command
         try {
-            $dataLoader->executePsql($decompressedFilePath);
-        } catch (\Exception $e) {
+            $dataLoader->executePsql($decompressedFilePath, DataLoader::TMP_DATABASE_NAME);
+        } catch (Exception $e) {
             return $this->json([
                 'error' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);

@@ -11,11 +11,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ExecuteImportSqlCommand extends Command
+class ExecuteSQLImportCommand extends Command
 {
     public static $defaultName = 'app:import-sql-script';
 
-    public function __construct(private Filesystem $filesystem, private DataLoader $dataLoader, private string $targetDirectory)
+    public function __construct(
+        private readonly Filesystem $filesystem,
+        private readonly DataLoader $dataLoader,
+        private readonly string $targetDirectory
+    )
     {
         parent::__construct();
     }
@@ -50,9 +54,9 @@ class ExecuteImportSqlCommand extends Command
             return Command::FAILURE;
         }
         // Get database connection parameters from Doctrine
-        $io->text("Executing import SQL file: {$filename} ...");;
+        $io->text("Executing import SQL file: <fg=magenta>{$filename}</> ...");;
         try {
-            $result = $this->dataLoader->executePsql($filePath);
+            $result = $this->dataLoader->executePsql($filePath, DataLoader::TMP_DATABASE_NAME);
         }catch (Exception $e) {
             $io->error($e->getMessage());
             return Command::FAILURE;

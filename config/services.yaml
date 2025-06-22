@@ -46,3 +46,7 @@ services:
     App\Commands\ExecuteSqlExportCommand:
         arguments:
             $targetDirectory: '%exported_tmp_data_dir%'
+
+    App\Commands\ExecuteSQLMergeCommand:
+        arguments:
+            $targetDirectory: '%exported_tmp_data_dir%'

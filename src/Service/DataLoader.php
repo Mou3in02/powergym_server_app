@@ -9,6 +9,7 @@ use Symfony\Component\Process\Process;
 
 class DataLoader
 {
+    const DATABASE_NAME = 'power_gym_database';
     const TMP_DATABASE_NAME = 'power_gym_database_tmp';
     private $connection;
     private $logger;
@@ -19,7 +20,7 @@ class DataLoader
         $this->logger = $logger;
     }
 
-    public function executePsql(string $filePath): array
+    public function executePsql(string $filePath, string $dbname): array
     {
         if (!file_exists($filePath)) {
             throw new InvalidArgumentException("File does not exist: {$filePath}");
@@ -30,7 +31,6 @@ class DataLoader
         $params = $this->connection->getParams();
         $host = $params['host'] ?? 'localhost';
         $port = $params['port'] ?? 5432;
-        $dbname = self::TMP_DATABASE_NAME;
         $user = $params['user'];
         $password = $params['password'];
         $commandScript = [
