@@ -39,11 +39,11 @@ services:
         arguments:
             $targetDirectory: '%decompressed_file_upload_dir%'
 
-    App\Commands\ExecuteImportSqlCommand:
+    App\Commands\ExecuteSQLImportCommand:
         arguments:
             $targetDirectory: '%decompressed_file_upload_dir%'
 
-    App\Commands\ExecuteSqlExportCommand:
+    App\Commands\ExecuteSQLExportCommand:
         arguments:
             $targetDirectory: '%exported_tmp_data_dir%'
 
