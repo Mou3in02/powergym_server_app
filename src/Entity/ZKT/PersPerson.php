@@ -6,8 +6,8 @@ use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PersPersonRepository::class)]
-#[ORM\Table(name: 'pers_person')]
+//#[ORM\Entity(repositoryClass: PersPersonRepository::class)]
+//#[ORM\Table(name: 'pers_person')]
 class PersPerson
 {
     #[ORM\Id]

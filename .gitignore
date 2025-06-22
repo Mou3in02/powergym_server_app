@@ -41,5 +41,7 @@
 phpstan.neon
 ###< phpstan/phpstan ###
 
-# uplaaded files
-/src/uploads/*
+# Uplaoded files
+/src/uploads/compressed/*
+/src/uploads/decompressed/*
+/src/uploads/exported_tmp_data/*

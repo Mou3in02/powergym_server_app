@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Service\DataLoader;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ExecuteSqlCommand extends Command
+class ExecuteImportSqlCommand extends Command
 {
     public static $defaultName = 'app:import-sql-script';
 
@@ -24,7 +25,7 @@ class ExecuteSqlCommand extends Command
         $this
             ->setDescription('Import SQL file to database')
             ->setHelp('app:import-sql-script => This command allows you to import SQL file to database')
-            ->setAliases(['app:i-s'])
+            ->setAliases(['app:i-s-s'])
             ->addArgument('filename', InputArgument::REQUIRED, 'The filename of the SQL file to import')
         ;
     }
@@ -36,7 +37,7 @@ class ExecuteSqlCommand extends Command
         $filePath = $this->targetDirectory . '/' . $filename;
         // check a file to execute
         if (!$this->filesystem->exists($filePath)) {
-            $output->error("File does not exist: {$filename} in directory {$this->targetDirectory}");
+            $io->error("File does not exist: {$filename} in directory {$this->targetDirectory}");
             return Command::FAILURE;
         }
         if (!is_readable($filePath)) {
@@ -45,14 +46,14 @@ class ExecuteSqlCommand extends Command
         }
         $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
         if($fileExtension !== 'psql') {
-            $output->error('File extension must be .psql');
+            $io->error('File extension must be .psql');
             return Command::FAILURE;
         }
         // Get database connection parameters from Doctrine
-        $io->text("Executing SQL file: {$filename} ...");;
+        $io->text("Executing import SQL file: {$filename} ...");;
         try {
-            $result = $this->dataLoader->executePsql($filename);
-        }catch (\Exception $e) {
+            $result = $this->dataLoader->executePsql($filePath);
+        }catch (Exception $e) {
             $io->error($e->getMessage());
             return Command::FAILURE;
         }
@@ -60,6 +61,5 @@ class ExecuteSqlCommand extends Command
 
         return Command::SUCCESS;
     }
-
 
 }

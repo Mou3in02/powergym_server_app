@@ -11,6 +11,7 @@ parameters:
     uploads_directory: '%kernel.project_dir%/src/uploads'
     compressed_file_upload_dir: '%kernel.project_dir%/src/uploads/compressed'
     decompressed_file_upload_dir: '%kernel.project_dir%/src/uploads/decompressed'
+    exported_tmp_data_dir: '%kernel.project_dir%/src/uploads/exported_tmp_data'
 
 services:
     # default configuration for services in *this* file
@@ -38,6 +39,10 @@ services:
         arguments:
             $targetDirectory: '%decompressed_file_upload_dir%'
 
-    App\Commands\ExecuteSqlCommand:
+    App\Commands\ExecuteImportSqlCommand:
         arguments:
             $targetDirectory: '%decompressed_file_upload_dir%'
+
+    App\Commands\ExecuteSqlExportCommand:
+        arguments:
+            $targetDirectory: '%exported_tmp_data_dir%'

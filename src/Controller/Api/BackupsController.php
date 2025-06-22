@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Commands\ExecuteSqlCommand;
+use App\Service\DataLoader;
 use App\Service\FileUploader;
 use App\Service\SevenZipExtractor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,7 +10,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -34,7 +33,7 @@ class BackupsController extends AbstractController
     }
 
     #[Route('/upload', name: 'api_backups_upload_file', methods: ['POST'])]
-    public function uploadBackupData(Request $request, FileUploader $fileUploader, SevenZipExtractor $extractor): JsonResponse
+    public function uploadBackupData(Request $request, FileUploader $fileUploader, SevenZipExtractor $extractor, DataLoader $dataLoader): JsonResponse
     {
         $uploadedFile = $request->files->get('file');
         if (!$uploadedFile) {
@@ -70,9 +69,15 @@ class BackupsController extends AbstractController
         $uploadedFilePath =  $this->compressedFileDirectory. '/' . $fileName;
         $result = $extractor->extract($uploadedFilePath, $this->decompressedFileDirectory);
         $decompressedFileName = array_key_first($result['files']);
+        $decompressedFilePath = $this->decompressedFileDirectory . '/' . $decompressedFileName;
         // run load data command
-        $process = new Process(['php', 'bin/console', ExecuteSqlCommand::$defaultName, $decompressedFileName]);
-        $process->start();
+        try {
+            $dataLoader->executePsql($decompressedFilePath);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         return $this->json([
             'message' => 'File uploaded successfully'

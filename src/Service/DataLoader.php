@@ -9,7 +9,7 @@ use Symfony\Component\Process\Process;
 
 class DataLoader
 {
-
+    const TMP_DATABASE_NAME = 'power_gym_database_tmp';
     private $connection;
     private $logger;
 
@@ -30,10 +30,10 @@ class DataLoader
         $params = $this->connection->getParams();
         $host = $params['host'] ?? 'localhost';
         $port = $params['port'] ?? 5432;
-        $dbname = $params['dbname'] ?? '';
-        $user = $params['user'] ?? '';
-        $password = $params['password'] ?? '';
-        $command = [
+        $dbname = self::TMP_DATABASE_NAME;
+        $user = $params['user'];
+        $password = $params['password'];
+        $commandScript = [
             'psql',
             '-h', $host,
             '-p', (string)$port,
@@ -42,8 +42,8 @@ class DataLoader
             '-f', $filePath
         ];
 
-        $process = new Process($command, null, null, null, null);
-        $process->setTimeout(null);
+        $process = new Process($commandScript);
+        $process->setTimeout(600);
         $env = $process->getEnv();
         $env['PGPASSWORD'] = $password;
         $process->setEnv($env);
@@ -56,7 +56,7 @@ class DataLoader
             'user' => $user
         ]);
 
-        $process->mustRun();
+        $process->run();
         $output = $process->getOutput();
         $errorOutput = $process->getErrorOutput();
 
