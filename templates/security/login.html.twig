@@ -44,7 +44,8 @@
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <button type="submit">Log In</button>
+            <button type="button" onclick="window.location.href='{{ path('app_index') }}'">Log In</button>
+
 
             <div class="register">
                 <p>Don't have an account? <a href="#">Register</a></p>
