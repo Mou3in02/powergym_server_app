@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ ('css/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Login.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -44,7 +44,7 @@
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <button type="button" onclick="window.location.href='{{ path('app_index') }}'">Log In</button>
+            <button type="submit">Log In</button>
 
 
             <div class="register">
