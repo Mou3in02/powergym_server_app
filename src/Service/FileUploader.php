@@ -22,7 +22,6 @@ class FileUploader
     public function __construct(private string $targetDirectory, private SluggerInterface $slugger, private EntityManagerInterface $em, private LoggerInterface $logger)
     {
         $this->filesystem = new Filesystem();
-        // Create an extract directory if it doesn't exist
         if (!$this->filesystem->exists($this->targetDirectory)) {
             $this->filesystem->mkdir($this->targetDirectory);
         }

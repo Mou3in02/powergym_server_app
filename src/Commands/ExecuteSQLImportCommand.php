@@ -2,7 +2,12 @@
 
 namespace App\Commands;
 
+use App\Entity\FileExecution;
+use App\helpers\ByteConverter;
+use App\helpers\TimeFormatter;
 use App\Service\DataLoader;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,9 +21,10 @@ class ExecuteSQLImportCommand extends Command
     public static $defaultName = 'app:import-sql-script';
 
     public function __construct(
-        private readonly Filesystem $filesystem,
-        private readonly DataLoader $dataLoader,
-        private readonly string $targetDirectory
+        private readonly Filesystem             $filesystem,
+        private readonly DataLoader             $dataLoader,
+        private readonly EntityManagerInterface $em,
+        private readonly string                 $targetDirectory
     )
     {
         parent::__construct();
@@ -27,11 +33,10 @@ class ExecuteSQLImportCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Import SQL file to database')
-            ->setHelp('app:import-sql-script => This command allows you to import SQL file to database')
+            ->setDescription('Import SQL file to tmp database')
+            ->setHelp('app:import-sql-script => This command allows you to import SQL file to tmp database')
             ->setAliases(['app:i-s-s'])
-            ->addArgument('filename', InputArgument::REQUIRED, 'The filename of the SQL file to import')
-        ;
+            ->addArgument('filename', InputArgument::REQUIRED, 'The filename of the SQL file to import');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -49,20 +54,42 @@ class ExecuteSQLImportCommand extends Command
             return Command::FAILURE;
         }
         $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
-        if($fileExtension !== 'psql') {
+        if ($fileExtension !== 'psql') {
             $io->error('File extension must be .psql');
             return Command::FAILURE;
         }
         // Get database connection parameters from Doctrine
         $io->text("Executing import SQL file: <fg=magenta>{$filename}</> ...");;
+        $now = new DateTime();
+        $startTime = microtime(true);
+        $fileExecution = (new FileExecution())
+            ->setFilename($filename)
+            ->setType(FileExecution::TYPE_EXPORT)
+            ->setSize(filesize($filePath) ?? 0)
+            ->setSizeDescription(ByteConverter::formatBytes(filesize($filePath) ?? 0))
+            ->setCreatedAt($now)
+            ->setStartAt($startTime)
+            ->setIsDeleted(false);
+        $this->em->persist($fileExecution);
         try {
-            $result = $this->dataLoader->executePsql($filePath, DataLoader::TMP_DATABASE_NAME);
-        }catch (Exception $e) {
+            $result = $this->dataLoader->executePsql($filePath, DataLoader::TMP_DATABASE_NAME, FileExecution::TYPE_IMPORT);
+        } catch (Exception $e) {
+            $fileExecution->setStatus(FileExecution::STATUS_FAILED);
+                $this->em->persist($fileExecution);
+                $this->em->flush();
             $io->error($e->getMessage());
             return Command::FAILURE;
         }
-        $io->success('SQL file executed successfully ');
+        $endTime = microtime(true);
+        $executionTime = $endTime - $startTime;
+        $fileExecution->setEndAt($endTime)
+            ->setExecutionTime($executionTime)
+            ->setExecutionTimeDescription(TimeFormatter::formatShort($executionTime))
+            ->setStatus(FileExecution::STATUS_SUCCESS);
+        $this->em->persist($fileExecution);
+        $this->em->flush();
 
+        $io->success('SQL file executed successfully ');
         return Command::SUCCESS;
     }
 

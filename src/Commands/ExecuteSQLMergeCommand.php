@@ -2,7 +2,12 @@
 
 namespace App\Commands;
 
+use App\Entity\FileExecution;
+use App\helpers\ByteConverter;
+use App\helpers\TimeFormatter;
 use App\Service\DataLoader;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -18,10 +23,11 @@ class ExecuteSQLMergeCommand extends Command
     public static $defaultName = 'app:merge-sql-script';
 
     public function __construct(
-        private readonly DataLoader $dataLoader,
-        private readonly LoggerInterface $logger,
-        private readonly Filesystem $filesystem,
-        private readonly string $targetDirectory
+        private readonly DataLoader             $dataLoader,
+        private readonly LoggerInterface        $logger,
+        private readonly Filesystem             $filesystem,
+        private readonly EntityManagerInterface $em,
+        private readonly string                 $targetDirectory
     )
     {
         parent::__construct();
@@ -47,17 +53,39 @@ class ExecuteSQLMergeCommand extends Command
             return Command::FAILURE;
         }
         $files = $this->getAllExportedFiles($this->targetDirectory . '/' . $timestamp);
+        $now = new DateTime();
+        $startTime = microtime(true);
+        $fileExecution = (new FileExecution())
+            ->setFilename('TMP_DATABASE')
+            ->setType(FileExecution::TYPE_MERGE)
+            ->setSize(0)
+            ->setSizeDescription(0)
+            ->setCreatedAt($now)
+            ->setStartAt($startTime)
+            ->setIsDeleted(false);
+        $this->em->persist($fileExecution);
         foreach ($files as $file) {
             $io->text("Executing SQL file: <fg=magenta>{$file['filename']}</> ...");
             // Get database connection parameters from Doctrine
             try {
-                $result = $this->dataLoader->executePsql($file['path'], DataLoader::DATABASE_NAME);
+                $result = $this->dataLoader->executePsql($file['path'], DataLoader::DATABASE_NAME, FileExecution::TYPE_MERGE);
             } catch (Exception $e) {
                 $io->error('Error executing SQL file: ' . $file['filename']);
                 $this->logger->error($e->getMessage());
+                $fileExecution->setStatus(FileExecution::STATUS_FAILED);
+                $this->em->persist($fileExecution);
+                $this->em->flush();
                 return Command::FAILURE;
             }
         }
+        $endTime = microtime(true);
+        $executionTime = $endTime - $startTime;
+        $fileExecution->setEndAt($endTime)
+            ->setExecutionTime($executionTime)
+            ->setExecutionTimeDescription(TimeFormatter::formatShort($executionTime))
+            ->setStatus(FileExecution::STATUS_SUCCESS);
+        $this->em->persist($fileExecution);
+        $this->em->flush();
 
         $io->success('Merge tmp data executed successfully');
         return Command::SUCCESS;
