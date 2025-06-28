@@ -19,24 +19,26 @@ final class Version20250623223110 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('
-            CREATE TABLE file_import (
-                id SERIAL NOT NULL, 
-                original_name VARCHAR(255) DEFAULT NULL, 
-                filename VARCHAR(255) DEFAULT NULL, 
-                size INT DEFAULT NULL, 
-                size_description VARCHAR(50) DEFAULT NULL, 
-                imported_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, 
-                is_deleted BOOLEAN DEFAULT NULL, 
-                status VARCHAR(50) DEFAULT NULL, 
-                PRIMARY KEY(id)
+            CREATE TABLE file_execution (
+                id SERIAL PRIMARY KEY,
+                type VARCHAR(50) NOT NULL,
+                filename VARCHAR(255) DEFAULT NULL,
+                size INTEGER DEFAULT NULL,
+                size_description VARCHAR(50) DEFAULT NULL,
+                created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
+                status VARCHAR(50) DEFAULT NULL,
+                execution_time  VARCHAR(255) DEFAULT NULL,
+                execution_time_description VARCHAR(50) DEFAULT NULL,
+                start_at  VARCHAR(255) DEFAULT NULL,
+                end_at  VARCHAR(255) DEFAULT NULL,
+                is_deleted BOOLEAN NOT NULL DEFAULT false
             )'
         );
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE file_import');
+        $this->addSql('DROP TABLE file_execution');
     }
 }

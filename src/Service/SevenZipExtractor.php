@@ -12,8 +12,6 @@ class SevenZipExtractor
     public function __construct(private string $targetDirectory)
     {
         $this->filesystem = new Filesystem();
-
-        // Create an extract directory if it doesn't exist
         if (!$this->filesystem->exists($this->targetDirectory)) {
             $this->filesystem->mkdir($this->targetDirectory);
         }
@@ -63,33 +61,4 @@ class SevenZipExtractor
         }
     }
 
-    /**
-     * List contents of 7z file without extracting
-     */
-    public function listContents(string $archivePath): array
-    {
-        if (!$this->filesystem->exists($archivePath)) {
-            throw new \InvalidArgumentException("Archive file does not exist: {$archivePath}");
-        }
-
-        try {
-            $archive = new Archive7z($archivePath);
-            $entries = $archive->getEntries();
-            $contents = [];
-
-            foreach ($entries as $entry) {
-                $contents[] = [
-                    'path' => $entry->getPath(),
-                    'size' => $entry->getSize(),
-                    'packed_size' => $entry->getPackedSize(),
-                    'is_directory' => $entry->isDirectory(),
-                    'modified' => $entry->getModified()
-                ];
-            }
-
-            return $contents;
-        } catch (\Exception $e) {
-            throw new \RuntimeException("Failed to read archive: " . $e->getMessage());
-        }
-    }
 }
