@@ -1,3 +1,5 @@
+{# templates/admin/widgets.html.twig #}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,14 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AdminLTE 3 | Widgets</title>
 
-  <!-- Google Font: Source Sans Pro -->
+  {# Google Font: Source Sans Pro #}
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="../plugins/fontawesome-free/css/all.min.css">
-  <!-- Ionicons -->
+
+  {# Font Awesome #}
+  <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
+
+  {# Ionicons #}
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="../dist/css/adminlte.min.css">
+
+  {# Theme style #}
+  <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -449,7 +454,7 @@
           </li>
           <li class="nav-header">EXAMPLES</li>
           <li class="nav-item">
-            <a href="calendar.html.twig" class="nav-link">
+            <a href="calendar.html" class="nav-link">
               <i class="nav-icon far fa-calendar-alt"></i>
               <p>
                 Calendar
@@ -458,7 +463,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="gallery.html.twig" class="nav-link">
+            <a href="gallery.html" class="nav-link">
               <i class="nav-icon far fa-image"></i>
               <p>
                 Gallery
@@ -466,7 +471,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="kanban.html.twig" class="nav-link">
+            <a href="kanban.html" class="nav-link">
               <i class="nav-icon fas fa-columns"></i>
               <p>
                 Kanban Board
@@ -483,19 +488,19 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="mailbox/mailbox.html.twig" class="nav-link">
+                <a href="mailbox/mailbox.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Inbox</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="mailbox/compose.html.twig" class="nav-link">
+                <a href="mailbox/compose.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Compose</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="mailbox/read-mail.html.twig" class="nav-link">
+                <a href="mailbox/read-mail.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Read</p>
                 </a>
