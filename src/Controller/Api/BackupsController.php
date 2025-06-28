@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\FileImport;
 use App\Service\DataLoader;
 use App\Service\FileUploader;
 use App\Service\SevenZipExtractor;
@@ -65,7 +66,13 @@ class BackupsController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
         // upload the file
-        $fileName = $fileUploader->upload($uploadedFile);
+        try {
+            $fileName = $fileUploader->upload($uploadedFile);
+        } catch (Exception $e) {
+            return $this->json([
+                'error' => 'Error uploading file !',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
         // extract uploaded file
         $uploadedFilePath =  $this->compressedFileDirectory. '/' . $fileName;
         $result = $extractor->extract($uploadedFilePath, $this->decompressedFileDirectory);
