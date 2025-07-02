@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Doctrine\DBAL\Connection;
 use InvalidArgumentException;
+use Monolog\Level;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
@@ -11,16 +12,16 @@ class DataLoader
 {
     const DATABASE_NAME = 'power_gym_database';
     const TMP_DATABASE_NAME = 'power_gym_database_tmp';
-    private $connection;
-    private $logger;
 
-    public function __construct(Connection $connection, LoggerInterface $logger)
+    public function __construct(
+        private Connection         $connection,
+        private LoggerInterface    $logger,
+        private ErrorLoggerService $errorLoggerService,
+    )
     {
-        $this->connection = $connection;
-        $this->logger = $logger;
     }
 
-    public function executePsql(string $filePath, string $dbname): array
+    public function executePsql(string $filePath, string $dbname, string $fileExecType): array
     {
         if (!file_exists($filePath)) {
             throw new InvalidArgumentException("File does not exist: {$filePath}");
@@ -60,10 +61,14 @@ class DataLoader
         $output = $process->getOutput();
         $errorOutput = $process->getErrorOutput();
 
-        $this->logger->info('psql completed successfully', [
-            'file' => $filePath,
-            'exit_code' => $process->getExitCode()
-        ]);
+        if ($process->isSuccessful()) {
+            $this->logger->info('psql completed successfully', [
+                'file' => $filePath,
+                'exit_code' => $process->getExitCode()
+            ]);
+        } else {
+            $this->errorLoggerService->logError(new \Exception($errorOutput), Level::Critical);
+        }
 
         return [
             'success' => true,

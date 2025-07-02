@@ -2,10 +2,13 @@
 
 namespace App\Commands;
 
+use App\Entity\FileExecution;
 use App\Factory\DatabaseConnectionFactory;
+use App\helpers\TimeFormatter;
 use App\Service\DataLoader;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -21,12 +24,19 @@ class ExecuteSQLExportCommand extends Command
     private Connection $mainDB;
     private Connection $tmpDB;
     private LoggerInterface $logger;
+    private EntityManagerInterface $em;
 
-    public function __construct(LoggerInterface $logger, DatabaseConnectionFactory $databaseConnectionFactory, private string $targetDirectory)
+    public function __construct(
+        LoggerInterface           $logger,
+        DatabaseConnectionFactory $databaseConnectionFactory,
+        EntityManagerInterface    $em,
+        private string            $targetDirectory
+    )
     {
         $this->mainDB = $databaseConnectionFactory->getDefaultConnection();
         $this->tmpDB = $databaseConnectionFactory->getSecondConnection();
         $this->logger = $logger;
+        $this->em = $em;
         parent::__construct();
     }
 
@@ -58,20 +68,42 @@ class ExecuteSQLExportCommand extends Command
             $this->logger->error($e->getMessage());
             return Command::FAILURE;
         }
+
+        $now = new DateTime();
+        $startTime = microtime(true);
+        $fileExecution = (new FileExecution())
+            ->setFilename('TMP_DATABASE')
+            ->setType(FileExecution::TYPE_EXPORT)
+            ->setSize(0)
+            ->setSizeDescription(0)
+            ->setCreatedAt($now)
+            ->setStartAt($startTime)
+            ->setIsDeleted(false);
+        $this->em->persist($fileExecution);
         // Merging data
         $timestamp = (new DateTime())->getTimestamp();
         foreach ($tablesNames as $tableName) {
-            if ($tableName === 'pers_person') {
-                $io->text("Exporting tmp data from <fg=magenta>{$tableName}</> table ...");
-                try {
-                    $this->exportTmpTable($tableName, $timestamp);
-                } catch (Exception $e) {
-                    $io->error('Error exporting data from ' . $tableName . ' table');
-                    $this->logger->error($e->getMessage());
-                    return Command::FAILURE;
-                }
+            $io->text("Exporting tmp data from <fg=magenta>{$tableName}</> table ...");
+            try {
+                $this->exportTmpTable($tableName, $timestamp);
+            } catch (Exception $e) {
+                $io->error('Error exporting data from ' . $tableName . ' table');
+                $this->logger->error($e->getMessage());
+                $fileExecution->setStatus(FileExecution::STATUS_FAILED);
+                $this->em->persist($fileExecution);
+                $this->em->flush();
+                return Command::FAILURE;
             }
         }
+
+        $endTime = microtime(true);
+        $executionTime = $endTime - $startTime;
+        $fileExecution->setEndAt($endTime)
+            ->setExecutionTime($executionTime)
+            ->setExecutionTimeDescription(TimeFormatter::formatShort($executionTime))
+            ->setStatus(FileExecution::STATUS_SUCCESS);
+        $this->em->persist($fileExecution);
+        $this->em->flush();
 
         $io->success('Export tmp data executed successfully');
         return Command::SUCCESS;
@@ -119,6 +151,7 @@ class ExecuteSQLExportCommand extends Command
         $env['PGPASSWORD'] = $password;
         $process->setEnv($env);
 
+
         $this->logger->info('Executing pg_dump', [
             'database' => $dbname,
             'host' => $host,
@@ -126,13 +159,20 @@ class ExecuteSQLExportCommand extends Command
             'user' => $user
         ]);
         // Run the process and capture the output
-        $process->mustRun();
+        $process->run();
         // Write output to a file
         file_put_contents($outputFile, $process->getOutput());
 
-        $this->logger->info('pg_dump completed successfully', [
-            'exit_code' => $process->getExitCode()
-        ]);
+        if ($process->isSuccessful()) {
+            $this->logger->info('pg_dump completed successfully', [
+                'exit_code' => $process->getExitCode()
+            ]);
+        } else {
+            $this->logger->error('pg_dump failed', [
+                'exit_code' => $process->getExitCode(),
+            ]);
+        }
+
     }
 
 }
