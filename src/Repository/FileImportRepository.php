@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\FileImport;
+use App\Entity\FileUpload;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<FileImport>
+ * @extends ServiceEntityRepository<FileUpload>
  */
 class FileImportRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, FileImport::class);
+        parent::__construct($registry, FileUpload::class);
     }
 
     //    /**
-    //     * @return FileImport[] Returns an array of FileImport objects
+    //     * @return FileUpload[] Returns an array of FileUpload objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class FileImportRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?FileImport
+    //    public function findOneBySomeField($value): ?FileUpload
     //    {
     //        return $this->createQueryBuilder('f')
     //            ->andWhere('f.exampleField = :val')

@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\FileImportRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: FileImportRepository::class)]
-#[ORM\Table(name: 'file_import')]
-class FileImport
+#[ORM\Entity]
+#[ORM\Table(name: 'file_upload')]
+class FileUpload
 {
-    const STATUS_IMPORTED = 'IMPORTED';
+    const STATUS_PENDING = 'PENDING';
     const STATUS_ERROR = 'ERROR';
+    const STAUS_EXTRACTED = 'EXTRACTED';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -30,7 +30,7 @@ class FileImport
     private ?string $sizeDescription = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $importedAt = null;
+    private ?\DateTime $uploadedAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isDeleted = null;
@@ -91,14 +91,14 @@ class FileImport
         return $this;
     }
 
-    public function getImportedAt(): ?\DateTime
+    public function getUploadedAt(): ?\DateTime
     {
-        return $this->importedAt;
+        return $this->uploadedAt;
     }
 
-    public function setImportedAt(?\DateTime $importedAt): static
+    public function setUploadedAt(?\DateTime $uploadedAt): static
     {
-        $this->importedAt = $importedAt;
+        $this->uploadedAt = $uploadedAt;
 
         return $this;
     }
