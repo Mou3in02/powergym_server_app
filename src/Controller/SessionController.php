@@ -6,11 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SeanceController extends AbstractController
+class SessionController extends AbstractController
 {
-    #[Route('/add-seance', name: 'add_seance')]
-    public function addSeance(): Response
+    #[Route('/add-session', name: 'add_session')]
+    public function addSession(): Response
     {
-        return $this->render('add_seance.html.twig');
+        return $this->render('add_session.html.twig');
     }
 }

@@ -371,6 +371,9 @@
               </div>
               <!-- /.card-header -->
               {# Affichage des messages flash (success, danger, etc.) #}
+
+
+              <!-- form start -->
               {% for label, messages in app.flashes %}
                 {% for message in messages %}
                   {% if label == 'success' %}
@@ -388,50 +391,48 @@
                   {% endif %}
                 {% endfor %}
               {% endfor %}
-
-              <!-- form start -->
               <div class="card-body">
+                {{ form_start(form, {'attr': {'id': 'quickForm'}}) }}
                 <div class="form-group">
-              {{ form_start(form, {'attr': {'id': 'quickForm'}}) }}
-              <div class="form-group">
-                {{ form_label(form.id_admin) }}
-                {{ form_widget(form.id_admin, {'attr': {'class': 'form-control'}}) }}
+                  {{ form_label(form.id_client) }}
+                  {{ form_widget(form.id_client, {'attr': {'class': 'form-control'}}) }}
+                  {{ form_errors(form.id_client) }}
+
+                </div>
+
+                <div class="form-group">
+                  {{ form_label(form.first_name) }}
+                  {{ form_widget(form.first_name, {'attr': {'class': 'form-control'}}) }}
+                  {{ form_errors(form.first_name) }}
+
+                </div>
+
+                <div class="form-group">
+                  {{ form_label(form.last_name) }}
+                  {{ form_widget(form.last_name, {'attr': {'class': 'form-control'}}) }}
+                  {{ form_errors(form.id_client) }}
+                  {{ form_errors(form.last_name) }}
+
+                </div>
+
+                <div class="form-group">
+                  {{ form_label(form.price) }}
+                  {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                  {{ form_errors(form.price) }}
+
+                </div>
+
+                <div class="form-group">
+                  {{ form_label(form.date_time) }}
+                  {{ form_widget(form.date_time, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
+
+                {{ form_end(form) }}
               </div>
 
-              <div class="form-group">
-                {{ form_label(form.first_name) }}
-                {{ form_widget(form.first_name, {'attr': {'class': 'form-control'}}) }}
-
-              </div>
-
-              <div class="form-group">
-                {{ form_label(form.last_name) }}
-                {{ form_widget(form.last_name, {'attr': {'class': 'form-control'}}) }}
-
-              </div>
-
-              <div class="form-group">
-                {{ form_label(form.price) }}
-                {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
-              </div>
-
-                  <div class="form-group">
-                    {{ form_label(form.date_time) }}
-                    {{ form_widget(form.date_time, {
-                      'attr': {
-                        'class': 'form-control',
-                        'readonly': 'readonly'
-                      }
-                    }) }}
-                  </div>
-
-
-                  <button type="submit" class="btn btn-primary">Ajouter</button>
-              {{ form_end(form) }}
             </div>
-            </div>
-            <!-- /.card -->
-          </div>
           </div>
           <!--/.col (left) -->
           <!-- right column -->
