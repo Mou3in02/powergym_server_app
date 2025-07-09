@@ -18,15 +18,13 @@ class SessionPersController extends AbstractController
     public function addSession(Request $request, EntityManagerInterface $em): Response
     {
         $session = new SessionPers();
-
-        $dateMoinsUneHeure = (new DateTimeImmutable())->sub(new DateInterval('PT1H'));
-        $session->setDateTime($dateMoinsUneHeure);
-
         $form = $this->createForm(SessionPersType::class, $session);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $session->setcreatedBy($this->getUser());
+
+            $dateMoinsUneHeure = (new \DateTimeImmutable())->sub(new \DateInterval('PT1H'));
+            $session->setDateTime(\DateTime::createFromImmutable($dateMoinsUneHeure));
 
             $em->persist($session);
             $em->flush();

@@ -393,12 +393,7 @@
               {% endfor %}
               <div class="card-body">
                 {{ form_start(form, {'attr': {'id': 'quickForm'}}) }}
-                <div class="form-group">
-                  {{ form_label(form.id_client) }}
-                  {{ form_widget(form.id_client, {'attr': {'class': 'form-control'}}) }}
-                  {{ form_errors(form.id_client) }}
 
-                </div>
 
                 <div class="form-group">
                   {{ form_label(form.first_name) }}
@@ -410,7 +405,6 @@
                 <div class="form-group">
                   {{ form_label(form.last_name) }}
                   {{ form_widget(form.last_name, {'attr': {'class': 'form-control'}}) }}
-                  {{ form_errors(form.id_client) }}
                   {{ form_errors(form.last_name) }}
 
                 </div>
