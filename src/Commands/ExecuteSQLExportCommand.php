@@ -40,7 +40,7 @@ class ExecuteSQLExportCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Export data from temporary database to main database')

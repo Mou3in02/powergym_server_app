@@ -39,6 +39,13 @@ services:
         arguments:
             $targetDirectory: '%decompressed_file_upload_dir%'
 
+    # Commands
+
+    App\Commands\ExtractFilesCommand:
+        arguments:
+            $compressedDirectory: '%compressed_file_upload_dir%'
+            $decompressedDirectory: '%decompressed_file_upload_dir%'
+
     App\Commands\ExecuteSQLImportCommand:
         arguments:
             $targetDirectory: '%decompressed_file_upload_dir%'
