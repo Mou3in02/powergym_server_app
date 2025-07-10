@@ -9,8 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use DateTimeImmutable;
-use DateInterval;
+
 
 class SessionPersController extends AbstractController
 {
@@ -20,11 +19,12 @@ class SessionPersController extends AbstractController
         $session = new SessionPers();
         $form = $this->createForm(SessionPersType::class, $session);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $session->setcreatedBy($this->getUser());
 
-            $dateMoinsUneHeure = (new \DateTimeImmutable())->sub(new \DateInterval('PT1H'));
-            $session->setDateTime(\DateTime::createFromImmutable($dateMoinsUneHeure));
+        if ($form->isSubmitted() && $form->isValid()) {
+            $session->setCreatedBy($this->getUser());
+
+
+            $session->setDateTime(new \DateTime());
 
             $em->persist($session);
             $em->flush();

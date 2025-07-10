@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SessionController extends AbstractController
+class SessionContoller extends AbstractController
 {
     #[Route('/add-session', name: 'add_session')]
     public function addSession(): Response

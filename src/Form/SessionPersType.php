@@ -28,12 +28,6 @@ class SessionPersType extends AbstractType
                     '5000 TND' => 5000,
                     'Gratuit' => 0,
                 ],
-            ])
-            ->add('date_time', DateTimeType::class, [
-                'label' => 'Date & Heure',
-                'widget' => 'single_text',
-                'html5' => true,
-                'attr' => ['readonly' => 'readonly'],
             ]);
     }
 
