@@ -15,8 +15,7 @@ class SessionPers
     private ?User $createdBy = null;
 
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private ?string $id_client = null;
+
 
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $first_name = null;
@@ -32,9 +31,6 @@ class SessionPers
 
 
     public function getId(): ?int { return $this->id; }
-
-    //public function getIdClient(): ?string { return $this->id_client; }
-    //public function setIdClient(?string $id_client): self { $this->id_client = $id_client; return $this; }
 
     public function getFirstName(): ?string { return $this->first_name; }
     public function setFirstName(?string $first_name): self { $this->first_name = $first_name; return $this; }
