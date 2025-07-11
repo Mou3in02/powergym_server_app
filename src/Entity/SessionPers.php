@@ -10,7 +10,7 @@ class SessionPers
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id = null-1;
+    private ?int $id = null;
 
     private ?User $createdBy = null;
 
