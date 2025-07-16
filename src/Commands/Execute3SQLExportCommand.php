@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
-class ExecuteSQLExportCommand extends Command
+class Execute3SQLExportCommand extends Command
 {
     public static $defaultName = 'app:export-sql-script';
     private Connection $mainDB;

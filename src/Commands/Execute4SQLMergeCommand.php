@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
-class ExecuteSQLMergeCommand extends Command
+class Execute4SQLMergeCommand extends Command
 {
     public static $defaultName = 'app:merge-sql-script';
 

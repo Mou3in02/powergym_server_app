@@ -25,10 +25,13 @@ class SevenZipExtractor
         if (!$this->filesystem->exists($archiveFilePath)) {
             throw new \InvalidArgumentException("Archive file does not exist: {$archiveFilePath}");
         }
+
         $destination = $destinationPath ?: $this->targetDirectory;
         if (!$this->filesystem->exists($destination)) {
             $this->filesystem->mkdir($destination);
         }
+
+        $data = [];
         try {
             $archive = new Archive7z($archiveFilePath);
             // Get a list of files in the archive
@@ -45,15 +48,18 @@ class SevenZipExtractor
                     }
                     // Extract the file
                     $entry->extractTo($destination);
-                    $extractedFiles[$entry->getPath()] = $outputPath;
+                    $extractedFiles[] = [
+                        'path' => $outputPath,
+                        'name' => $entry->getPath(),
+                        'size' => $entry->getSize(),
+                    ];
                 }
             }
 
             return [
-                'success' => true,
                 'destination' => $destination,
                 'files' => $extractedFiles,
-                'count' => count($extractedFiles)
+                'count' => count($extractedFiles),
             ];
 
         } catch (\Exception $e) {

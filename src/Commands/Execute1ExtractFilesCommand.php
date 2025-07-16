@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand('app:extract-uploaded-files')]
-class ExtractFilesCommand extends Command
+class Execute1ExtractFilesCommand extends Command
 {
     public function __construct(
         ErrorLoggerService     $logger,
@@ -46,42 +46,52 @@ class ExtractFilesCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $startTime = microtime(true);
 
-        $filesToExtract = $this->em->getRepository(FileUpload::class)->findBy([
-            'status' => FileExtract::STATUS_PENDING,
+        $uploadedFiles = $this->em->getRepository(FileUpload::class)->findBy([
+            'status' => FileUpload::STATUS_PENDING,
             'isDeleted' => false
         ]);
+
         $io->info('Starting extracting uploaded files ...');
-        foreach ($filesToExtract as $fileImport) {
+        foreach ($uploadedFiles as $fileUploaded) {
             try {
-                $io->text('extracting file - ' . $fileImport->getFilename());
+                $io->text('extracting file - ' . $fileUploaded->getFilename());
                 $fileExtract = (new FileExtract())
-                    ->setFilename($fileImport->getFilename())
-                    ->setOriginalName($fileImport->getOriginalName())
                     ->setExtractedAt(new \DateTime())
                     ->setStatus(FileExtract::STATUS_PENDING)
-                    ->setSize($fileImport->getSize())
-                    ->setSizeDescription(ByteConverter::formatBytes($fileImport->getSize()))
                     ->setIsDeleted(false);
                 // extract uploaded file
-                $uploadedFilePath = $this->compressedDirectory . '/' . $fileImport->getFileName();
+                $uploadedFilePath = $this->compressedDirectory . '/' . $fileUploaded->getFileName();
                 $result = $this->sevenZipExtractor->extract($uploadedFilePath, $this->decompressedDirectory);
+                dump($result);
+                if (empty($result['files'])) {
+                    $errorMessage = 'Failed to extract empty uploaded file: ' . $fileUploaded->getFilename();
+                    $io->error($errorMessage);
+                    $this->logger->logError(new \Exception($errorMessage), Level::Critical);
+                }
+                $extractedData = $result['files'][0];
+                $fileExtract->setFilename($extractedData['name'])
+                    ->setOriginalName($extractedData['name'])
+                    ->setSize($extractedData['size'])
+                    ->setSizeDescription(ByteConverter::formatBytes($extractedData['size']));
+
                 $fileExtract->setStatus(FileExtract::STAUS_EXECUTED);
+                $fileUploaded->setStatus(FileUpload::STAUS_EXTRACTED);
             } catch (\Exception $exception) {
                 if (isset($fileExtract)) {
                     $fileExtract->setStatus(FileExtract::STATUS_ERROR);
                 }
-                $io->error('Error extracting file - ' . $fileImport->getFileName());
+                $io->error('Error extracting file - ' . $fileUploaded->getFileName());
                 $this->logger->logError($exception, Level::Critical);
             } finally {
-                $fileImport->setStatus(FileUpload::STAUS_EXTRACTED);
+                if (isset($fileExtract)) {
+                    $this->em->persist($fileExtract);
+                }
             }
-            $this->em->persist($fileImport);
-            if (isset($fileExtract)) {
-                $this->em->persist($fileExtract);
-            }
+            $this->em->persist($fileUploaded);
         }
 
         $this->em->flush();
+        $io->text('Number of extracted files processed: ' . count($uploadedFiles));
         $io->success('Extract files executed successfully');
         $io->info('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
 

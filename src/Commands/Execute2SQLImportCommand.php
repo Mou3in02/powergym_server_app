@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ExecuteSQLImportCommand extends Command
+class Execute2SQLImportCommand extends Command
 {
     public static $defaultName = 'app:import-sql-script';
 
@@ -42,7 +42,7 @@ class ExecuteSQLImportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $filename = $input->getArgument('filename');
+        $filename = $input->getArgument('filename'); // TODO: must be removed
         $filePath = $this->targetDirectory . '/' . $filename;
         // check a file to execute
         if (!$this->filesystem->exists($filePath)) {
