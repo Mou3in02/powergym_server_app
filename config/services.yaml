@@ -48,7 +48,7 @@ services:
 
     App\Commands\Execute2SQLImportCommand:
         arguments:
-            $targetDirectory: '%decompressed_file_upload_dir%'
+            $decompressedDirectory: '%decompressed_file_upload_dir%'
 
     App\Commands\Execute3SQLExportCommand:
         arguments:

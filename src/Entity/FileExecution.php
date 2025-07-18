@@ -13,6 +13,7 @@ class FileExecution
     const TYPE_IMPORT = 'TYPE_IMPORT';
     const TYPE_EXPORT = 'TYPE_EXPORT';
     const TYPE_MERGE = 'TYPE_MERGE';
+    const STATUS_PENDING = 'STATUS_PENDING';
     const STATUS_FAILED = 'STATUS_FAILED';
     const STATUS_SUCCESS = 'STATUS_SUCCESS';
 

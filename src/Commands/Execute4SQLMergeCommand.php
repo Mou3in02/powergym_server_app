@@ -3,25 +3,23 @@
 namespace App\Commands;
 
 use App\Entity\FileExecution;
-use App\helpers\ByteConverter;
 use App\helpers\TimeFormatter;
 use App\Service\DataLoader;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+#[AsCommand(name: 'app:merge-sql-script')]
 class Execute4SQLMergeCommand extends Command
 {
-    public static $defaultName = 'app:merge-sql-script';
-
     public function __construct(
         private readonly DataLoader             $dataLoader,
         private readonly LoggerInterface        $logger,
@@ -38,56 +36,67 @@ class Execute4SQLMergeCommand extends Command
         $this
             ->setDescription('Merge tmp data from exported_tmp_data directory to main database')
             ->setHelp('app:merge-sql-script => This command allows you to merge data from temporary directory to main database')
-            ->setAliases(['app:m-s-s'])
-            ->addArgument('timestamp', InputArgument::REQUIRED, 'Timestamp (directory) of the exported tmp SQL file');
+            ->setAliases(['app:m-s-s']);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $timestamp = $input->getArgument('timestamp');
-        // check exported directories
-        if (!$this->filesystem->exists($this->targetDirectory . '/' . $timestamp)) {
-            $io->error("Exported tmp data directory does not exist: {$timestamp}");
-            $this->logger->error("Exported tmp data directory does not exist: {$timestamp}");
-            return Command::FAILURE;
-        }
-        $files = $this->getAllExportedFiles($this->targetDirectory . '/' . $timestamp);
-        $now = new DateTime();
         $startTime = microtime(true);
-        $fileExecution = (new FileExecution())
-            ->setFilename('TMP_DATABASE')
-            ->setType(FileExecution::TYPE_MERGE)
-            ->setSize(0)
-            ->setSizeDescription(0)
-            ->setCreatedAt($now)
-            ->setStartAt($startTime)
-            ->setIsDeleted(false);
-        $this->em->persist($fileExecution);
-        foreach ($files as $file) {
-            $io->text("Executing SQL file: <fg=magenta>{$file['filename']}</> ...");
-            // Get database connection parameters from Doctrine
-            try {
-                $result = $this->dataLoader->executePsql($file['path'], DataLoader::DATABASE_NAME, FileExecution::TYPE_MERGE);
-            } catch (Exception $e) {
-                $io->error('Error executing SQL file: ' . $file['filename']);
-                $this->logger->error($e->getMessage());
-                $fileExecution->setStatus(FileExecution::STATUS_FAILED);
-                $this->em->persist($fileExecution);
-                $this->em->flush();
+
+        $executedFiles = $this->em->getRepository(FileExecution::class)->findBy([
+            'type' => FileExecution::TYPE_EXPORT,
+            'status' => FileExecution::STATUS_PENDING,
+            'isDeleted' => false
+        ]);
+
+        foreach ($executedFiles as $executedFolder) {
+            $timestamp = $executedFolder->getFilename();
+            // check exported directories
+            if (!$this->filesystem->exists($this->targetDirectory . '/' . $timestamp)) {
+                $io->error("Exported tmp data directory does not exist: {$timestamp}");
+                $this->logger->error("Exported tmp data directory does not exist: {$timestamp}");
                 return Command::FAILURE;
             }
-        }
-        $endTime = microtime(true);
-        $executionTime = $endTime - $startTime;
-        $fileExecution->setEndAt($endTime)
-            ->setExecutionTime($executionTime)
-            ->setExecutionTimeDescription(TimeFormatter::formatShort($executionTime))
-            ->setStatus(FileExecution::STATUS_SUCCESS);
-        $this->em->persist($fileExecution);
-        $this->em->flush();
 
+            $io->info('Merging folder - ' . $timestamp . ' ...');
+            $files = $this->getAllExportedFiles($this->targetDirectory . '/' . $timestamp);
+            $now = new DateTime();
+            $fileExecution = (new FileExecution())
+                ->setFilename('TMP_DATABASE')
+                ->setType(FileExecution::TYPE_MERGE)
+                ->setSize(0)
+                ->setSizeDescription(0)
+                ->setCreatedAt($now)
+                ->setStartAt($startTime)
+                ->setIsDeleted(false);
+
+            foreach ($files as $file) {
+                $io->text("Executing SQL file: <fg=magenta>{$file['filename']}</> ...");
+                // Get database connection parameters from Doctrine
+                try {
+                    $result = $this->dataLoader->executePsql($file['path'], DataLoader::DATABASE_NAME, FileExecution::TYPE_MERGE);
+                    $executedFolder->setStatus(FileExecution::STATUS_SUCCESS);
+                    $fileExecution->setStatus(FileExecution::STATUS_SUCCESS);
+                } catch (Exception $e) {
+                    $io->error('Error executing SQL file: ' . $file['filename']);
+                    $this->logger->error($e->getMessage());
+                    $fileExecution->setStatus(FileExecution::STATUS_FAILED);
+                } finally {
+                    $endTime = microtime(true);
+                    $executionTime = $endTime - $startTime;
+                    $fileExecution->setEndAt($endTime)
+                        ->setExecutionTime($executionTime)
+                        ->setExecutionTimeDescription(TimeFormatter::formatShort($executionTime));
+                    $this->em->persist($fileExecution);
+                }
+            }
+        }
+
+        $this->em->flush();
         $io->success('Merge tmp data executed successfully');
+        $io->info('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
+
         return Command::SUCCESS;
     }
 

@@ -24,7 +24,7 @@ class FileUploader
         private readonly string                 $targetDirectory,
         private readonly SluggerInterface       $slugger,
         private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface        $logger
     )
     {
         $this->filesystem = new Filesystem();
