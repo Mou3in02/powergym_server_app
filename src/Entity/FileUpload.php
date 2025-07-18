@@ -10,7 +10,7 @@ class FileUpload
 {
     const STATUS_PENDING = 'PENDING';
     const STATUS_ERROR = 'ERROR';
-    const STAUS_EXTRACTED = 'EXTRACTED';
+    const STATUS_FINISHED = 'FINISHED';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

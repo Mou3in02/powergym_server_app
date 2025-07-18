@@ -9,8 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 class FileExtract
 {
     const STATUS_PENDING = 'PENDING';
+    const STATUS_FINISHED = 'FINISHED';
     const STATUS_ERROR = 'ERROR';
-    const STAUS_EXECUTED = 'EXECUTED';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

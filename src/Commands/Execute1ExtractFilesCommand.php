@@ -20,17 +20,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class Execute1ExtractFilesCommand extends Command
 {
     public function __construct(
-        ErrorLoggerService     $logger,
-        EntityManagerInterface $em,
-        SevenZipExtractor      $sevenZipExtractor,
-        private string         $compressedDirectory,
-        private string         $decompressedDirectory,
+        private readonly ErrorLoggerService     $logger,
+        private readonly EntityManagerInterface $em,
+        private readonly SevenZipExtractor      $sevenZipExtractor,
+        private string                          $compressedDirectory,
+        private string                          $decompressedDirectory,
     )
     {
         parent::__construct();
-        $this->logger = $logger;
-        $this->em = $em;
-        $this->sevenZipExtractor = $sevenZipExtractor;
     }
 
     protected function configure(): void
@@ -57,12 +54,10 @@ class Execute1ExtractFilesCommand extends Command
                 $io->text('extracting file - ' . $fileUploaded->getFilename());
                 $fileExtract = (new FileExtract())
                     ->setExtractedAt(new \DateTime())
-                    ->setStatus(FileExtract::STATUS_PENDING)
                     ->setIsDeleted(false);
                 // extract uploaded file
                 $uploadedFilePath = $this->compressedDirectory . '/' . $fileUploaded->getFileName();
                 $result = $this->sevenZipExtractor->extract($uploadedFilePath, $this->decompressedDirectory);
-                dump($result);
                 if (empty($result['files'])) {
                     $errorMessage = 'Failed to extract empty uploaded file: ' . $fileUploaded->getFilename();
                     $io->error($errorMessage);
@@ -73,15 +68,15 @@ class Execute1ExtractFilesCommand extends Command
                     ->setOriginalName($extractedData['name'])
                     ->setSize($extractedData['size'])
                     ->setSizeDescription(ByteConverter::formatBytes($extractedData['size']));
-
-                $fileExtract->setStatus(FileExtract::STAUS_EXECUTED);
-                $fileUploaded->setStatus(FileUpload::STAUS_EXTRACTED);
-            } catch (\Exception $exception) {
+                // If a file extracted without error
+                $fileExtract->setStatus(FileExtract::STATUS_PENDING);
+                $fileUploaded->setStatus(FileUpload::STATUS_FINISHED);
+            } catch (\Exception $e) {
                 if (isset($fileExtract)) {
                     $fileExtract->setStatus(FileExtract::STATUS_ERROR);
                 }
                 $io->error('Error extracting file - ' . $fileUploaded->getFileName());
-                $this->logger->logError($exception, Level::Critical);
+                $this->logger->logError($e, Level::Critical);
             } finally {
                 if (isset($fileExtract)) {
                     $this->em->persist($fileExtract);
