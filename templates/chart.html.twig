@@ -60,6 +60,18 @@
           </div>
 
         </div>
+
+        <!-- BAR CHART -->
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Bar Chart</h3>
+          </div>
+          <div class="card-body">
+            <canvas id="barChart1" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
       </section>
 
     </div>
@@ -71,122 +83,168 @@
       <strong>&copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
     </footer>
   </div>
+{% endblock %}
 
-  {% block javascripts %}
-    {% include 'blocks/javascripts.html.twig' %}
-    <script>
-      $(function () {
-        const ctxDonut = $('#donutChart').get(0).getContext('2d');
-        let donutChart;
+{% block javascripts %}
+  {% include 'blocks/javascripts.html.twig' %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    $(function () {
+      // -- Donut Chart (inchangé) --
+      const ctxDonut = $('#donutChart').get(0).getContext('2d');
+      let donutChart;
 
-        const donutOptions = {
-          maintainAspectRatio: false,
+      const donutOptions = {
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.parsed || 0;
+                return `${label}: ${value}`;
+              }
+            }
+          }
+        }
+      };
+
+      const fixedDayColors = {
+        'Monday': '#4A90E2',
+        'Tuesday': '#50E3C2',
+        'Wednesday': '#F5A623',
+        'Thursday': '#D0021B',
+        'Friday': '#9013FE',
+        'Saturday': '#F8E71C',
+        'Sunday': '#B8E986',
+        'No client': '#70726E'
+      };
+
+      function loadDonutChart(date = '') {
+        fetch(`/chart?date=${date}`)
+                .then(response => response.json())
+                .then(result => {
+                  const labels = result.labels;
+                  const data = result.data.map(v => Number(v));
+
+                  const allZero = data.every(value => value === 0);
+
+                  let donutData, colors, donutLabels;
+
+                  if (allZero) {
+                    donutLabels = ['Aucun client cette semaine'];
+                    colors = [fixedDayColors['No client']];
+                    donutData = [100];
+                  } else {
+                    donutLabels = labels;
+                    colors = labels.map(day => fixedDayColors[day] || '#CCCCCC');
+                    donutData = data;
+                  }
+
+                  if (donutChart) {
+                    donutChart.destroy();
+                  }
+
+                  donutChart = new Chart(ctxDonut, {
+                    type: 'doughnut',
+                    data: {
+                      labels: donutLabels,
+                      datasets: [{
+                        data: donutData,
+                        backgroundColor: colors,
+                      }]
+                    },
+                    options: donutOptions
+                  });
+                })
+                .catch(err => console.error('Erreur fetch:', err));
+      }
+
+      loadDonutChart();
+
+      $('#customDate').on('change', function () {
+        loadDonutChart(this.value);
+      });
+
+      // -- Bar Chart (inchangé) --
+      const labels = {{ labels|raw }};
+      const values = {{ values|raw }};
+
+      const ctxBar = document.getElementById('barChart').getContext('2d');
+      new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Nombre de clients par mois',
+            data: values,
+            backgroundColor: 'rgba(60,141,188,0.9)',
+            borderColor: 'rgba(60,141,188,1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
           responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      });
+
+      // -- Pie Chart (nouveau code intégré) --
+      const ctxPie = document.getElementById('barChart1').getContext('2d');
+
+      const pieLabels = {{ pieLabels|raw }};
+      const pieValues = {{ pieValues|raw }};
+
+      new Chart(ctxPie, {
+        type: 'bar',
+        data: {
+          labels: pieLabels,
+          datasets: [{
+            label: 'Total des prix (DNT)',
+            data: pieValues,
+            backgroundColor: 'rgba(60,141,188,0.9)',
+            borderColor: 'rgba(60,141,188,1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return value.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' DNT';
+                }
+              }
+            }
+          },
           plugins: {
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  const label = context.label || '';
-                  const value = context.parsed || 0;
-                  return `${label}: ${value}`;
+                  const label = context.dataset.label || '';
+                  const value = context.parsed.y || 0;
+                  const formatted = value.toLocaleString('fr-FR', {minimumFractionDigits: 2});
+                  return label + ': ' + formatted + ' DNT';
                 }
               }
             }
           }
-        };
-
-        const fixedDayColors = {
-          'Monday': '#4A90E2',
-          'Tuesday': '#50E3C2',
-          'Wednesday': '#F5A623',
-          'Thursday': '#D0021B',
-          'Friday': '#9013FE',
-          'Saturday': '#F8E71C',
-          'Sunday': '#B8E986',
-          'No client': '#70726E'
-        };
-
-        function loadDonutChart(date = '') {
-          fetch(`/chart?date=${date}`)
-                  .then(response => response.json())
-                  .then(result => {
-                    const labels = result.labels;
-                    const data = result.data.map(v => Number(v));
-
-                    const allZero = data.every(value => value === 0);
-
-                    let donutData, colors, donutLabels;
-
-                    if (allZero) {
-                      // Un seul secteur gris 100%
-                      donutLabels = ['Aucun client cette semaine'];
-                      colors = [fixedDayColors['No client']];
-                      donutData = [100];
-                    } else {
-                      donutLabels = labels;
-                      colors = labels.map(day => fixedDayColors[day] || '#CCCCCC');
-                      donutData = data;
-                    }
-
-                    if (donutChart) {
-                      donutChart.destroy();
-                    }
-
-                    donutChart = new Chart(ctxDonut, {
-                      type: 'doughnut',
-                      data: {
-                        labels: donutLabels,
-                        datasets: [{
-                          data: donutData,
-                          backgroundColor: colors,
-                        }]
-                      },
-                      options: donutOptions
-                    });
-                  })
-                  .catch(err => console.error('Erreur fetch:', err));
         }
-
-        loadDonutChart();
-
-        $('#customDate').on('change', function () {
-          loadDonutChart(this.value);
-        });
-
-        // Bar chart (inchangé)
-        const labels = {{ labels|raw }};
-        const values = {{ values|raw }};
-
-        const ctxBar = document.getElementById('barChart').getContext('2d');
-        new Chart(ctxBar, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Nombre de clients par mois',
-              data: values,
-              backgroundColor: 'rgba(60,141,188,0.9)',
-              borderColor: 'rgba(60,141,188,1)',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  precision: 0
-                }
-              }
-            }
-          }
-        });
       });
-    </script>
 
 
-
-  {% endblock %}
+    });
+  </script>
 {% endblock %}
