@@ -31,7 +31,7 @@ class ChartController extends AbstractController
             $monday = (clone $selectedDate)->modify('monday this week')->setTime(0, 0, 0);
             $sunday = (clone $monday)->modify('+6 days')->setTime(23, 59, 59);
 
-            // Nouvelle requête : nombre de clients par jour
+            // Requête nombre de clients par jour (inchangée)
             $sql = "
                 SELECT TO_CHAR(date_time, 'Day') AS day_label,
                        TO_CHAR(date_time, 'YYYY-MM-DD') AS day_date,
@@ -48,7 +48,6 @@ class ChartController extends AbstractController
                 'end' => $sunday->format('Y-m-d 23:59:59'),
             ])->fetchAllAssociative();
 
-            // Générer les jours même s'ils sont absents
             $days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
             $labels = [];
             $data = [];
@@ -71,7 +70,7 @@ class ChartController extends AbstractController
             return new JsonResponse(['labels' => $labels, 'data' => $data]);
         }
 
-        // Sinon : requête normale -> on renvoie la page avec les données mensuelles
+        // Requête nombre de clients par mois (inchangée)
         $sql = "
             SELECT 
                 TO_CHAR(date_time, 'MM') AS month_number,
@@ -103,9 +102,36 @@ class ChartController extends AbstractController
             $values[] = $dataMap[$num] ?? 0;
         }
 
+        // --- Nouvelle requête pour le pie chart : somme des prix par mois ---
+        $sqlPie = "
+            SELECT
+                TO_CHAR(date_time, 'MM') AS month_number,
+                TO_CHAR(date_time, 'TMMonth') AS month_name,
+                SUM(price) AS total_price
+            FROM session_pers
+            GROUP BY TO_CHAR(date_time, 'MM'), TO_CHAR(date_time, 'TMMonth')
+            ORDER BY TO_CHAR(date_time, 'MM')::int
+        ";
+
+        $dataPie = $connection->fetchAllAssociative($sqlPie);
+
+        $dataPieMap = [];
+        foreach ($dataPie as $row) {
+            $dataPieMap[$row['month_number']] = (float)$row['total_price'];
+        }
+
+        $pieLabels = [];
+        $pieValues = [];
+        foreach ($allMonths as $num => $name) {
+            $pieLabels[] = $name;
+            $pieValues[] = $dataPieMap[$num] ?? 0;
+        }
+
         return $this->render('chart.html.twig', [
-            'labels' => json_encode($labels),
+            'labels' => json_encode($labels),          // pour bar & donut charts (nombre clients)
             'values' => json_encode($values),
+            'pieLabels' => json_encode($pieLabels),    // pour pie chart (somme des prix)
+            'pieValues' => json_encode($pieValues),
         ]);
     }
 }
