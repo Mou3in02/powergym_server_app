@@ -14,24 +14,18 @@ class ChartController extends AbstractController
     #[Route('/chart', name: 'chart', methods: ['GET'])]
     public function chart(Request $request, Connection $connection): Response
     {
-        // Si la requête est AJAX (fetch JS) -> on renvoie les données du donut chart hebdo en JSON
+        // Requête AJAX pour le graphique hebdomadaire
         if ($request->query->has('date')) {
             $dateParam = $request->query->get('date');
 
-            if ($dateParam) {
-                try {
-                    $selectedDate = new \DateTime($dateParam);
-                } catch (\Exception $e) {
-                    $selectedDate = new \DateTime();
-                }
-            } else {
+            $selectedDate = $dateParam ? \DateTime::createFromFormat('Y-m-d', $dateParam) : new \DateTime();
+            if (!$selectedDate) {
                 $selectedDate = new \DateTime();
             }
 
             $monday = (clone $selectedDate)->modify('monday this week')->setTime(0, 0, 0);
             $sunday = (clone $monday)->modify('+6 days')->setTime(23, 59, 59);
 
-            // Requête nombre de clients par jour (inchangée)
             $sql = "
                 SELECT TO_CHAR(date_time, 'Day') AS day_label,
                        TO_CHAR(date_time, 'YYYY-MM-DD') AS day_date,
@@ -70,7 +64,7 @@ class ChartController extends AbstractController
             return new JsonResponse(['labels' => $labels, 'data' => $data]);
         }
 
-        // Requête nombre de clients par mois (inchangée)
+        // Requête mensuelle - nombre de clients
         $sql = "
             SELECT 
                 TO_CHAR(date_time, 'MM') AS month_number,
@@ -102,7 +96,7 @@ class ChartController extends AbstractController
             $values[] = $dataMap[$num] ?? 0;
         }
 
-        // --- Nouvelle requête pour le pie chart : somme des prix par mois ---
+        // Requête mensuelle - total des prix
         $sqlPie = "
             SELECT
                 TO_CHAR(date_time, 'MM') AS month_number,
@@ -128,9 +122,9 @@ class ChartController extends AbstractController
         }
 
         return $this->render('chart.html.twig', [
-            'labels' => json_encode($labels),          // pour bar & donut charts (nombre clients)
+            'labels' => json_encode($labels),
             'values' => json_encode($values),
-            'pieLabels' => json_encode($pieLabels),    // pour pie chart (somme des prix)
+            'pieLabels' => json_encode($pieLabels),
             'pieValues' => json_encode($pieValues),
         ]);
     }
