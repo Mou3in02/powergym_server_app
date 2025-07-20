@@ -51,6 +51,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: false, options: ['default' => false])]
     private ?bool $isDeleted = null;
 
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
+
+
     public function getId(): int
     {
         return $this->id;
@@ -183,4 +187,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTime $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
 }

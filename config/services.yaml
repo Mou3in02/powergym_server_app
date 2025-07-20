@@ -41,19 +41,19 @@ services:
 
     # Commands
 
-    App\Commands\Execute1ExtractFilesCommand:
+    App\Command\Execute1ExtractFilesCommand:
         arguments:
             $compressedDirectory: '%compressed_file_upload_dir%'
             $decompressedDirectory: '%decompressed_file_upload_dir%'
 
-    App\Commands\Execute2SQLImportCommand:
+    App\Command\Execute2SQLImportCommand:
         arguments:
             $decompressedDirectory: '%decompressed_file_upload_dir%'
 
-    App\Commands\Execute3SQLExportCommand:
+    App\Command\Execute3SQLExportCommand:
         arguments:
             $targetDirectory: '%exported_tmp_data_dir%'
 
-    App\Commands\Execute4SQLMergeCommand:
+    App\Command\Execute4SQLMergeCommand:
         arguments:
             $targetDirectory: '%exported_tmp_data_dir%'
