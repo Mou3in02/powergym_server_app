@@ -1,8 +1,10 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_dashboard.html.twig' %}
 
 {% block title %}Power GYM | Dashboard{% endblock %}
 
-
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
 
 {% block body %}
 
@@ -57,7 +59,6 @@
 
     {% block javascripts %}
         {{ parent() }}
-        <script src="{{ asset('js/pages/per_person.js') }}"></script>
     {% endblock %}
 
 {% endblock %}
