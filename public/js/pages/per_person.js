@@ -1,6 +1,6 @@
 $(document).ready(() => {
 
-    const persDatatable = new DataTable('#pers_person_datatable', {
+    new DataTable('#pers_person_datatable', {
         retrieve: true,
         language: {
             "processing": "Traitement en cours...",
@@ -20,7 +20,6 @@ $(document).ready(() => {
         },
         pageLength: 10,
         responsive: true,
-        // order: [[ 0, "asc" ]]
     });
 
 });

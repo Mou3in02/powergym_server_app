@@ -27,7 +27,7 @@ final class Version20250707182740 extends AbstractMigration
                 size INT DEFAULT NULL, 
                 size_description VARCHAR(50) DEFAULT NULL, 
                 extracted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, 
-                is_deleted BOOLEAN DEFAULT NULL, 
+                is_deleted BOOLEAN DEFAULT false, 
                 status VARCHAR(50) DEFAULT NULL, 
                 PRIMARY KEY(id)
             )'

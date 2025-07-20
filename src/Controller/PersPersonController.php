@@ -8,10 +8,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/dashboard')]
 #[IsGranted("ROLE_ADMIN")]
 class PersPersonController extends AbstractController
 {
-    #[Route('/dashboard/pers-person', name: 'pers_person_index', methods: ['GET'])]
+    #[Route('/pers-person', name: 'pers_person_index', methods: ['GET'])]
     public function index(EntityManagerInterface $em)
     {
         $connection = $em->getConnection();

@@ -49,7 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $lastlogin = null;
 
     #[ORM\Column(nullable: false, options: ['default' => false])]
-    private ?bool $isDeleted = null;
+    private ?bool $isDeleted = false;
 
     #[ORM\Column(type: 'datetime')]
     private \DateTime $createdAt;

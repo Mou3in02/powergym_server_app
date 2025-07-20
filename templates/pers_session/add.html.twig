@@ -1,0 +1,87 @@
+{% extends 'base_dashboard.html.twig' %}
+
+ {% block title %} Dashboard {% endblock %}
+
+  {% block stylesheets %}
+      {{ parent() }}
+  {% endblock %}
+
+{% block body %}
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h4 class="h4 m-0">Ajouter une nouvelle séance individuelle</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        {% for label, messages in app.flashes %}
+                            {% for message in messages %}
+                                {% if label == 'success' %}
+                                    <div class="alert alert-success alert-dismissible fade show">
+                                        <i class="fas fa-check-circle"></i>
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% elseif label == 'danger' %}
+                                    <div class="alert alert-danger alert-dismissible fade show">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-{{ label }} alert-dismissible fade show">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                        <div class="card">
+                            <div class="card-body">
+                                {{ form_start(form, {'attr': {'id': 'quickForm'}}) }}
+                                <div class="form-group">
+                                    {{ form_label(form.first_name) }}
+                                    {{ form_widget(form.first_name, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.first_name) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_label(form.last_name) }}
+                                    {{ form_widget(form.last_name, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.last_name) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form_label(form.price) }}
+                                    {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.price) }}
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
