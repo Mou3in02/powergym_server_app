@@ -21,7 +21,7 @@ final class Version20250710112852 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('
-            CREATE TABLE session_pers (
+            CREATE TABLE pers_session (
                 id SERIAL NOT NULL, 
                 id_client VARCHAR(100) DEFAULT NULL, 
                 first_name VARCHAR(255) NOT NULL, 
@@ -37,6 +37,6 @@ final class Version20250710112852 extends AbstractMigration
     public function down(Schema $schema): void
     {
 
-        $this->addSql('DROP TABLE session_pers');
+        $this->addSql('DROP TABLE pers_session');
     }
 }
