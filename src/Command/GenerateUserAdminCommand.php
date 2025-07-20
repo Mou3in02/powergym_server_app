@@ -20,7 +20,7 @@ class GenerateUserAdminCommand extends Command
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
-        private readonly EntityManagerInterface  $em
+        private readonly EntityManagerInterface      $em
     )
     {
         parent::__construct();
@@ -45,6 +45,11 @@ class GenerateUserAdminCommand extends Command
         }
         if (!strlen($password)) {
             $io->error('Password cannot be empty !');
+            return Command::FAILURE;
+        }
+        $isUsernameExist = $this->em->getRepository(User::class)->count(['username' => $username]);
+        if ($isUsernameExist) {
+            $io->error('Username already exist create new one !');
             return Command::FAILURE;
         }
 

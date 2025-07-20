@@ -14,25 +14,29 @@ final class Version20250710112852 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create ';
     }
 
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            CREATE TABLE session_pers (id INT NOT NULL, id_client VARCHAR(50) DEFAULT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, price DOUBLE PRECISION NOT NULL, date_time TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))
-        SQL);
+        $this->addSql('
+            CREATE TABLE session_pers (
+                id SERIAL NOT NULL, 
+                id_client VARCHAR(100) DEFAULT NULL, 
+                first_name VARCHAR(255) NOT NULL, 
+                last_name VARCHAR(255) NOT NULL, 
+                price DOUBLE PRECISION NOT NULL, 
+                created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
+                is_deleted BOOLEAN DEFAULT false,
+                PRIMARY KEY(id)
+            )
+        ');
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            CREATE SCHEMA public
-        SQL);
-        $this->addSql(<<<'SQL'
-            DROP TABLE session_pers
-        SQL);
+
+        $this->addSql('DROP TABLE session_pers');
     }
 }

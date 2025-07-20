@@ -2,15 +2,14 @@
 
 namespace App\Form;
 
-use App\Entity\SessionPers;
+use App\Entity\PersSession;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SessionPersType extends AbstractType
+class PersSessionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -34,7 +33,7 @@ class SessionPersType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => SessionPers::class,
+            'data_class' => PersSession::class,
         ]);
     }
 }
