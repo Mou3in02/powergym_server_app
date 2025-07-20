@@ -5,9 +5,11 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
+
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="info">
-                <a href="#" class="d-block"><i class="fas fa-user-circle mr-1"></i> {{ app.user.username }}</a>
+
+                {# <a href="#" class="d-block"><i class="fas fa-user-circle mr-1"></i> {{ app.user.username }}</a>#}
             </div>
         </div>
 
@@ -64,7 +66,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ 'templates/charts/chart.html.twig' }}" class="nav-link">
+                            <a href="{{ 'chart.html.twig' }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>ChartJS</p>
                             </a>
@@ -81,7 +83,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ 'templates/forms/validation.html.twig' }}" class="nav-link">
+                            <a href="{{ 'add_session.html.twig' }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Ajouter séance</p>
                             </a>
