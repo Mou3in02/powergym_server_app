@@ -7,5 +7,19 @@
             <a href="{{ path('dashboard_index') }}" class="nav-link">Accueil</a>
         </li>
     </ul>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <style>
+                .logout-link:hover {
+                    color: red !important;
+                }
+            </style>
+            <a class="nav-link logout-link" href="{{ path('app_logout') }}" >
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </a>
+        </li>
+    </ul>
+
+
 
 </nav>
