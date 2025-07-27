@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\SQL\PerPersonSQL;
+use App\SQL\PersPersonSQL;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,7 +16,7 @@ class PersPersonController extends AbstractController
     public function index(EntityManagerInterface $em)
     {
         $connection = $em->getConnection();
-        $sqlScript = PerPersonSQL::getAllInfo();
+        $sqlScript = PersPersonSQL::getAllInfo();
         $stmt = $connection->prepare($sqlScript);
         $result = $stmt->executeQuery();
         $persons = $result->fetchAllAssociative();
