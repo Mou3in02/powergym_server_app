@@ -1,6 +1,18 @@
 $(document).ready(() => {
 
+    $('#customDate').datepicker({
+        format: "dd/mm/yyyy",
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "fr",
+        daysOfWeekDisabled: "1",
+        daysOfWeekHighlighted: "0",
+        todayHighlight: true,
+        defaultViewDate: new Date()
+    }).datepicker('setDate', new Date());
+
     new DataTable('#pers_access_datatable', {
+        searching: false,
         retrieve: true,
         language: {
             'processing': 'Traitement en cours...',
@@ -20,6 +32,37 @@ $(document).ready(() => {
         },
         pageLength: 10,
         responsive: true,
+    });
+
+    $('#filterForm').submit((event) => {
+        event.preventDefault();
+        const eventTime = $('#eventTime').val();
+        const customDate = $('#customDate').val();
+        const name = $('#search_name').val();
+        $.ajax({
+            method: 'POST',
+            url: '/dashboard/pers-access/filter',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                customDate,
+                eventTime,
+                name: name.trim(),
+            })
+        }).done((response) => {
+            const datatable = $('#pers_access_datatable').DataTable();
+            if (response && Array.isArray(response)) {
+                datatable.clear();
+                const arrayData = response.map(item => [
+                    item.name,
+                    item.create_time,
+                    item.dev_alias,
+                ]);
+                datatable.rows.add(arrayData);
+                datatable.draw();
+            }
+        }).catch((error) => {
+            throw new Error(error);
+        })
     });
 
 });
