@@ -2,6 +2,9 @@
 
 namespace App\SQL;
 
+/**
+ * @Info table "acc_transaction"
+ */
 class PersAccessSQL
 {
     const DEV_ALIAS_SORTIE = 'Sortie';

@@ -40,7 +40,7 @@ $(document).ready(() => {
         const name = $('#search_name').val();
         $.ajax({
             method: 'POST',
-            url: '/dashboard/pers-access/filter',
+            url: '/dashboard/pers-access-v2/filter',
             contentType: 'application/json',
             data: JSON.stringify({
                 customDate,
@@ -54,7 +54,8 @@ $(document).ready(() => {
                 const arrayData = response.map(item => [
                     item.name,
                     item.create_time,
-                    item.dev_alias,
+                    item.event,
+                    item.event_time
                 ]);
                 datatable.rows.add(arrayData);
                 datatable.draw();

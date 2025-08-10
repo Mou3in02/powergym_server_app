@@ -1,0 +1,58 @@
+<form id="filterForm">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <h3 class="card-title">
+                    <i class="fas fa-filter mr-2"></i>
+                    Filtres
+                </h3>
+                <div class="">
+                    <button type="reset" class="btn btn-secondary btn-sm"
+                            id="resetBtn">
+                        <i class="fas fa-undo mr-1"></i>
+                        Réinitialiser
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm ml-1">
+                        <i class="fas fa-search mr-1"></i>
+                        Rechercher
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="customDate">Date</label>
+                        <div class="input-group date">
+                            <input type="text" class="form-control" id="customDate"
+                                   name="customDate">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+{#                <div class="col-md-4">#}
+{#                    <div class="form-group">#}
+{#                        <label for="eventTime">Type appareil</label>#}
+{#                        <select class="form-control" id="eventTime" name="type">#}
+{#                            <option value="">Tous les types</option>#}
+{#                            {% for key, event in readerNameInList %}#}
+{#                                <option value="{{ key }}">{{ event }}</option>#}
+{#                            {% endfor %}#}
+{#                        </select>#}
+{#                    </div>#}
+{#                </div>#}
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="search_name">Nom et prénom</label>
+                        <input class="form-control" id="search_name" name="search_name" placeholder="Personne ...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
