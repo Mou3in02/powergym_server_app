@@ -52,10 +52,11 @@ $(document).ready(() => {
             if (response && Array.isArray(response)) {
                 datatable.clear();
                 const arrayData = response.map(item => [
+                    item.id,
                     item.name,
                     item.create_time,
-                    item.event,
-                    item.event_time
+                    // item.event_time_in,
+                    // item.event_time_out
                 ]);
                 datatable.rows.add(arrayData);
                 datatable.draw();

@@ -130,28 +130,17 @@ class PersAccessController extends AbstractController
             if (empty(trim($item['name'])) && empty(trim($item['last_name']))) {
                 continue;
             }
-            $name = $item['name'] . ' ' . $item['last_name'];
-            // Data in
             $data[] = [
                 'id' => $item['id'],
-                'name' => $name,
+                'name' => $item['name'] . ' ' . $item['last_name'],
                 'create_time' => DateTimeFormatter::format($item['create_time']),
-                'event' => PersAccessFirstInLastOut::READER_NAME_IN_ENTREE_VALUE,
-                'event_time' => DateTimeFormatter::format($item['first_in_time']),
-            ];
-            // Data out
-            $data[] = [
-                'id' => $item['id'],
-                'name' => $name,
-                'create_time' => DateTimeFormatter::format($item['create_time']),
-                'event' => PersAccessFirstInLastOut::READER_NAME_IN_SORTIE_VALUE,
-                'event_time' => DateTimeFormatter::format($item['last_out_time']),
+                'event_time_in' => DateTimeFormatter::format($item['first_in_time']),
+                'event_time_out' => DateTimeFormatter::format($item['last_out_time']),
             ];
         }
 
         return $this->render('pers_access/index_v2.twig', [
             'data' => $data,
-            'readerNameInList' => PersAccessFirstInLastOut::READER_NAME_IN_lIST
         ]);
     }
 
@@ -184,9 +173,9 @@ class PersAccessController extends AbstractController
             if (!empty($customDate)) {
                 $stmt->bindValue(':customDate', $customDate);
             }
-            if ($event && key_exists($event, PersAccessFirstInLastOut::READER_NAME_IN_lIST)) {
-                $stmt->bindValue(':event', $event);
-            }
+//            if ($event && key_exists($event, PersAccessFirstInLastOut::READER_NAME_IN_lIST)) {
+//                $stmt->bindValue(':event', $event);
+//            }
             if (!empty($name)) {
                 $stmt->bindValue(':name', '%' . trim($name) . '%');
             }
@@ -201,22 +190,12 @@ class PersAccessController extends AbstractController
             if (empty(trim($item['name'])) && empty(trim($item['last_name']))) {
                 continue;
             }
-            $name = $item['name'] . ' ' . $item['last_name'];
-            // Data in
             $data[] = [
                 'id' => $item['id'],
-                'name' => $name,
+                'name' => $item['name'] . ' ' . $item['last_name'],
                 'create_time' => DateTimeFormatter::format($item['create_time']),
-                'event_in' => PersAccessFirstInLastOut::READER_NAME_IN_ENTREE_VALUE,
                 'event_time_in' => DateTimeFormatter::format($item['first_in_time']),
-            ];
-            // Data out
-            $data[] = [
-                'id' => $item['id'],
-                'name' => $name,
-                'create_time' => DateTimeFormatter::format($item['create_time']),
-                'event' => PersAccessFirstInLastOut::READER_NAME_IN_SORTIE_VALUE,
-                'event_time' => DateTimeFormatter::format($item['last_out_time']),
+                'event_time_out' => DateTimeFormatter::format($item['last_out_time']),
             ];
         }
 
