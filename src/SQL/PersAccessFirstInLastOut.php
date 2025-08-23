@@ -38,7 +38,7 @@ class PersAccessFirstInLastOut
         ';
     }
 
-    static public function getAccessByFilter(?string $customDate, ?string $event, ?string $name): string
+    static public function getAccessByFilter(?string $customDate, ?string $name): string
     {
         $baseQuery = '
             SELECT id, create_time, update_time, first_in_time, last_out_time, reader_name_in, reader_name_out, pin, last_name, name
@@ -49,9 +49,6 @@ class PersAccessFirstInLastOut
         if (!empty($customDate)) {
             $whereClauses[] = 'DATE(create_time) = :customDate';
         }
-//        if (!empty($event) && key_exists($event, self::READER_NAME_IN_lIST)) {
-//            $whereClauses[] = 'reader_name_in = :event';
-//        }
         if (!empty($name)) {
             $whereClauses[] = '(
                 COALESCE(name, \'\') LIKE :name OR 
@@ -69,4 +66,46 @@ class PersAccessFirstInLastOut
 
         return $baseQuery;
     }
+
+    static public function getPersonList(): string
+    {
+        return "
+            SELECT DISTINCT TRIM(name) || ' ' || TRIM(last_name) AS full_name, pin
+            FROM public.acc_firstin_lastout
+        ";
+    }
+
+    static public function getYearlyAccessStatsByPin(): string
+    {
+        return "
+            SELECT TO_CHAR(create_time, 'MM') AS month_num, COUNT(*) AS total
+            FROM acc_firstin_lastout
+            WHERE pin = :pin AND EXTRACT(YEAR FROM create_time) = :currentYear
+            GROUP BY TO_CHAR(create_time, 'MM')
+            ORDER BY TO_CHAR(create_time, 'MM')
+        ";
+    }
+
+    static public function getWeeklyAccessStats(): string
+    {
+        return "
+            SELECT create_time::date AS day_date, COUNT(*) AS total
+            FROM acc_firstin_lastout
+            WHERE create_time::date BETWEEN :monday AND :sunday
+            GROUP BY create_time::date
+            ORDER BY create_time::date
+        ";
+    }
+
+    static  public function getMonthlyAccessStatsByYear(): string
+    {
+        return "
+            SELECT TO_CHAR(create_time, 'MM') AS month_num, COUNT(*) AS total
+            FROM acc_firstin_lastout
+            WHERE EXTRACT(YEAR FROM create_time) = :selectedYear
+            GROUP BY TO_CHAR(create_time, 'MM')
+            ORDER BY TO_CHAR(create_time, 'MM')
+        ";
+    }
+
 }

@@ -150,7 +150,6 @@ class PersAccessController extends AbstractController
         $filterData = $request->getContent();
         $filterData = json_decode($filterData, true);
         $customDate = $filterData['customDate'] ?? null;
-        $event = $filterData['eventTime'] ?? null;
         $name = $filterData['name'] ?? null;
 
         if (!empty($customDate)) {
@@ -167,15 +166,12 @@ class PersAccessController extends AbstractController
         $accessResult = [];
         try {
             $connection = $em->getConnection();
-            $sqlScript = PersAccessFirstInLastOut::getAccessByFilter($customDate, $event, $name);
+            $sqlScript = PersAccessFirstInLastOut::getAccessByFilter($customDate, $name);
             $stmt = $connection->prepare($sqlScript);
             // Check optional filter
             if (!empty($customDate)) {
                 $stmt->bindValue(':customDate', $customDate);
             }
-//            if ($event && key_exists($event, PersAccessFirstInLastOut::READER_NAME_IN_lIST)) {
-//                $stmt->bindValue(':event', $event);
-//            }
             if (!empty($name)) {
                 $stmt->bindValue(':name', '%' . trim($name) . '%');
             }
