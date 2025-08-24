@@ -16,7 +16,6 @@
         "gemorroj/archive7z": "^5.7",
         "lexik/jwt-authentication-bundle": "^3.1",
         "phpdocumentor/reflection-docblock": "^5.6",
-        "phpstan/phpdoc-parser": "^2.1",
         "symfony/asset": "6.4.*",
         "symfony/asset-mapper": "6.4.*",
         "symfony/console": "6.4.*",
@@ -85,7 +84,8 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "phpstan": "vendor/bin/phpstan analyse"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -97,6 +97,8 @@
         }
     },
     "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpdoc-parser": "^2.1",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.4.*",
         "symfony/css-selector": "6.4.*",

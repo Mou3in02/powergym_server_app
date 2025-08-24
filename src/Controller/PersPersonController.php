@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\helpers\DateTimeFormatter;
 use App\SQL\PersPersonSQL;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,7 @@ class PersPersonController extends AbstractController
         $result = $stmt->executeQuery();
         $persons = $result->fetchAllAssociative();
 
+        $now = new \DateTime();
         $data = [];
         foreach ($persons as $person) {
             if (empty(trim($person['name'])) && empty(trim($person['last_name']))) {
@@ -28,8 +30,12 @@ class PersPersonController extends AbstractController
             }
             $data[] = [
                 'id' => $person['id'],
-                'name' => $person['name'] . ' ' . $person['last_name'],
-                'createdAt' => $person['create_time'],
+                'fullname' => $person['name'] . ' ' . $person['last_name'],
+                'create_time' => DateTimeFormatter::format($person['create_time']),
+                'update_time' => DateTimeFormatter::format($person['update_time']),
+                'start_time' => DateTimeFormatter::format($person['start_time'], 'd/m/Y'),
+                'end_time' => DateTimeFormatter::format($person['end_time'], 'd/m/Y'),
+                'active' => new \DateTime($person['end_time']) > $now ? 'Oui' : 'Non',
             ];
         }
 

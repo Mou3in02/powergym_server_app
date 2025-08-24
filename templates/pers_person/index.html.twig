@@ -30,17 +30,23 @@
                                     <table id="pers_person_datatable" class="table table-striped table-bordered">
                                         <thead>
                                         <tr>
-                                            <th>ID</th>
                                             <th>Nom & prénom</th>
                                             <th>Date de création</th>
+                                            <th>Date de mise à jour</th>
+                                            <th>Date de debut</th>
+                                            <th>Date de fin</th>
+                                            <th>Active</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {% for person in persons %}
                                             <tr>
-                                                <td>{{ person.id }}</td>
-                                                <td>{{ person.name }}</td>
-                                                <td>{{ person.createdAt }}</td>
+                                                <td>{{ person.fullname }}</td>
+                                                <td>{{ person.create_time }}</td>
+                                                <td>{{ person.update_time }}</td>
+                                                <td>{{ person.start_time }}</td>
+                                                <td>{{ person.end_time }}</td>
+                                                <td>{{ person.active }}</td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>

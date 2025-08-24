@@ -79,7 +79,7 @@ class PersAccessFirstInLastOut
     {
         return "
             SELECT TO_CHAR(create_time, 'MM') AS month_num, COUNT(*) AS total
-            FROM acc_firstin_lastout
+            FROM public.acc_firstin_lastout
             WHERE pin = :pin AND EXTRACT(YEAR FROM create_time) = :currentYear
             GROUP BY TO_CHAR(create_time, 'MM')
             ORDER BY TO_CHAR(create_time, 'MM')
@@ -90,7 +90,7 @@ class PersAccessFirstInLastOut
     {
         return "
             SELECT create_time::date AS day_date, COUNT(*) AS total
-            FROM acc_firstin_lastout
+            FROM public.acc_firstin_lastout
             WHERE create_time::date BETWEEN :monday AND :sunday
             GROUP BY create_time::date
             ORDER BY create_time::date
@@ -101,11 +101,19 @@ class PersAccessFirstInLastOut
     {
         return "
             SELECT TO_CHAR(create_time, 'MM') AS month_num, COUNT(*) AS total
-            FROM acc_firstin_lastout
+            FROM public.acc_firstin_lastout
             WHERE EXTRACT(YEAR FROM create_time) = :selectedYear
             GROUP BY TO_CHAR(create_time, 'MM')
             ORDER BY TO_CHAR(create_time, 'MM')
         ";
     }
 
+    static public function countAccessByDate(): string
+    {
+        return '
+            SELECT COUNT(id)
+            FROM public.acc_firstin_lastout
+            WHERE DATE(create_time) = :customDate
+        ';
+    }
 }
