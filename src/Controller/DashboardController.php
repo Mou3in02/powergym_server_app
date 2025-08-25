@@ -26,8 +26,7 @@ class DashboardController extends AbstractController
         $result = $stmt->executeQuery();
         $nbPersonnes = $result->fetchNumeric();
 
-        // TODO: only Admin role
-        $nbAdmin = $em->getRepository(User::class)->count(['isDeleted' => false]);
+        $nbAdmin = $em->getRepository(User::class)->findByRoles(User::ROLE_ADMIN);
         // TODO: only current day
         $nbSeance = $em->getRepository(PersSession::class)->count(['isDeleted' => false]);
 
