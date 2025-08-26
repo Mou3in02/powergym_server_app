@@ -21,7 +21,7 @@ class AdminSessionType extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Adresse email',
-                'required' => true,
+                'required' => false,
             ])
             ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
