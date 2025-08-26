@@ -24,7 +24,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Tous les administrateurs enregistrés</h3>
+                                <h3 class="card-title">Administrateurs enregistrés</h3>
+                                <a class="btn btn-sm btn-primary float-right" href="{{ path('dashboard_admin_add') }}">Ajouter nouveau admin</a>
                             </div>
                             <div class="card-body">
                                 <table id="pers_session_table" class="table table-bordered table-striped">
@@ -35,7 +36,6 @@
                                         <th>Prénom</th>
                                         <th>Nom</th>
                                         <th>Email</th>
-                                        <th>Rôle</th>
                                         <th>Dernière connexion</th>
                                     </tr>
                                     </thead>
@@ -47,11 +47,10 @@
                                             <tr>
                                                 <td>{{ admin.id }}</td>
                                                 <td>{{ admin.username }}</td>
-                                                <td>{{ admin.firstname }}</td>
-                                                <td>{{ admin.lastname }}</td>
-                                                <td>{{ admin.email }}</td>
-                                                <td>{{ admin.roles|join(', ') }}</td>
-                                                <td>{{ admin.lastlogin ? admin.lastlogin|date('d/m/Y H:i') : 'Jamais' }}</td>
+                                                <td>{{ admin.firstname ?? '-' }}</td>
+                                                <td>{{ admin.lastname ?? '-' }}</td>
+                                                <td>{{ admin.email ?? '-' }}</td>
+                                                <td>{{ admin.lastlogin ? admin.lastlogin|date('d/m/Y H:i:s') : 'Jamais' }}</td>
                                             </tr>
                                         {% endif %}
                                     {% endfor %}

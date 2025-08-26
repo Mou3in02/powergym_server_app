@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AdminSessionController extends AbstractController
 {
-    #[Route('/admin/add', name: 'admin_add', methods: ['GET', 'POST'])]
+    #[Route('/admin/add', name: 'dashboard_admin_add', methods: ['GET', 'POST'])]
     public function add(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();
@@ -47,7 +47,7 @@ class AdminSessionController extends AbstractController
 
             $this->addFlash('success', 'Nouvel administrateur ajouté avec succès.');
 
-            return $this->redirectToRoute('admin_add');
+            return $this->redirectToRoute('dashboard_admin_add');
         }
 
         return $this->render('admin_session/add.html.twig', [
@@ -55,7 +55,7 @@ class AdminSessionController extends AbstractController
         ]);
     }
 
-    #[Route('/admin', name: 'admin_index')]
+    #[Route('/admin', name: 'dashboard_admin_index', methods: ['GET'])]
     public function index(EntityManagerInterface $em): Response
     {
         // Récupérer tous les administrateurs actifs
