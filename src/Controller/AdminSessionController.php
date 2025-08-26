@@ -48,4 +48,15 @@ class AdminSessionController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/admin', name: 'admin_index')]
+    public function index(EntityManagerInterface $em): Response
+    {
+        // Récupérer tous les administrateurs actifs
+        $admins = $em->getRepository(User::class)->findBy(['isDeleted' => false]);
+
+        return $this->render('admin_session/index.html.twig', [
+            'admins' => $admins,
+        ]);
+    }
 }
