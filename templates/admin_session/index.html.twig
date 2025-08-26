@@ -1,0 +1,87 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}AdminLTE 3 | Administrateurs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h4 class="h4 m-0">Liste des administrateurs</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Administrateurs enregistrés</h3>
+                                <a class="btn btn-sm btn-primary float-right" href="{{ path('dashboard_admin_add') }}">Ajouter nouveau admin</a>
+                            </div>
+                            <div class="card-body">
+                                <table id="pers_session_table" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nom d’utilisateur</th>
+                                        <th>Prénom</th>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Dernière connexion</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set hasAdmin = false %}
+                                    {% for admin in admins %}
+                                        {% if not admin.isDeleted %}
+                                            {% set hasAdmin = true %}
+                                            <tr>
+                                                <td>{{ admin.id }}</td>
+                                                <td>{{ admin.username }}</td>
+                                                <td>{{ admin.firstname ?? '-' }}</td>
+                                                <td>{{ admin.lastname ?? '-' }}</td>
+                                                <td>{{ admin.email ?? '-' }}</td>
+                                                <td>{{ admin.lastlogin ? admin.lastlogin|date('d/m/Y H:i:s') : 'Jamais' }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not hasAdmin %}
+                                        <tr>
+                                            <td colspan="7" class="text-center">Aucun administrateur trouvé.</td>
+                                        </tr>
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            $('#pers_session_table').DataTable({
+                responsive: true,
+                lengthChange: false,
+                autoWidth: false,
+                paging: true,
+                ordering: true,
+                searching: false
+            });
+        });
+    </script>
+{% endblock %}
