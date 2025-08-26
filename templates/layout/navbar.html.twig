@@ -14,4 +14,13 @@
             </a>
         </li>
     </ul>
+
+    <script>
+        // Déconnexion automatique après 5 minutes (300000 ms)
+        setTimeout(function() {
+            window.location.href = "{{ path('app_logout') }}";
+        }, 300000);
+    </script>
+
+
 </nav>
