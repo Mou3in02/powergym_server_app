@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block body %}
@@ -12,7 +13,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h4 class="h4 m-0">Liste des administrateurs</h4>
+                        <h4>Liste des administrateurs</h4>
                     </div>
                 </div>
             </div>
@@ -20,6 +21,17 @@
 
         <section class="content">
             <div class="container-fluid">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Fermer">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -37,6 +49,7 @@
                                         <th>Nom</th>
                                         <th>Email</th>
                                         <th>Dernière connexion</th>
+                                        <th>Actions</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -51,6 +64,35 @@
                                                 <td>{{ admin.lastname ?? '-' }}</td>
                                                 <td>{{ admin.email ?? '-' }}</td>
                                                 <td>{{ admin.lastlogin ? admin.lastlogin|date('d/m/Y H:i:s') : 'Jamais' }}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal{{ admin.id }}" title="Supprimer">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+
+                                                    <div class="modal fade" id="deleteModal{{ admin.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ admin.id }}" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                                            <div class="modal-content rounded shadow">
+                                                                <div class="modal-header bg-white">
+                                                                    <h5 class="modal-title text-dark" id="deleteModalLabel{{ admin.id }}">⚠️ Confirmation de suppression</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body bg-white text-dark">
+                                                                    Êtes-vous sûr de vouloir supprimer cet administrateur ?
+                                                                </div>
+                                                                <div class="modal-footer justify-content-between">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                                                                    <form method="post" action="{{ path('dashboard_admin_delete', {'id': admin.id}) }}" style="display:inline-block;">
+                                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ admin.id) }}">
+                                                                        <button class="btn btn-danger" type="submit">Oui</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </td>
                                             </tr>
                                         {% endif %}
                                     {% endfor %}
@@ -72,16 +114,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script>
-        $(function () {
-            $('#pers_session_table').DataTable({
-                responsive: true,
-                lengthChange: false,
-                autoWidth: false,
-                paging: true,
-                ordering: true,
-                searching: false
-            });
-        });
-    </script>
+    <script src="{{ asset('js/pages/admin_session/index.js') }}"></script>
 {% endblock %}
