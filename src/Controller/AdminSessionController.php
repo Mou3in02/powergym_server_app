@@ -62,8 +62,9 @@ class AdminSessionController extends AbstractController
     #[Route('/admin/delete/{id}', name: 'dashboard_admin_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $em): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $em->remove($user);
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
+            $user->setIsDeleted(true);
+            $em->persist($user);
             $em->flush();
 
             $this->addFlash('success', 'Administrateur supprimé.');
