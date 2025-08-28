@@ -26,19 +26,15 @@ class AdminSessionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $isUsernameExist = $em->getRepository(User::class)->count(['username' => trim($user->getUsername())]);
             if ($isUsernameExist) {
-                // username already exists
                 $form->get('username')->addError(new FormError('Ce nom d\'utilisateur existe déjà.'));
-
                 return $this->render('admin_session/add.html.twig', [
                     'form' => $form->createView(),
                 ]);
             }
-            // Encoder le mot de passe
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $user->getPassword()
-            );
+
+            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
+
             // Forcer le rôle ADMIN
             $user->setRoles([User::ROLE_ADMIN]);
 
@@ -46,7 +42,6 @@ class AdminSessionController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Nouvel administrateur ajouté avec succès.');
-
             return $this->redirectToRoute('dashboard_admin_add');
         }
 
@@ -58,11 +53,22 @@ class AdminSessionController extends AbstractController
     #[Route('/admin', name: 'dashboard_admin_index', methods: ['GET'])]
     public function index(EntityManagerInterface $em): Response
     {
-        // Récupérer tous les administrateurs actifs
         $admins = $em->getRepository(User::class)->findBy(['isDeleted' => false]);
-
         return $this->render('admin_session/index.html.twig', [
             'admins' => $admins,
         ]);
     }
+
+    #[Route('/admin/delete/{id}', name: 'dashboard_admin_delete', methods: ['POST'])]
+    public function delete(Request $request, User $user, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            $em->remove($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Administrateur supprimé.');
+        }
+        return $this->redirectToRoute('dashboard_admin_index');
+    }
+
 }
