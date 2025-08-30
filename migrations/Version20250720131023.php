@@ -20,7 +20,7 @@ final class Version20250720131023 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('
-            CREATE TABLE "user" (
+            CREATE TABLE public.user (
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(180) NOT NULL,
                 roles JSON NOT NULL,
@@ -40,6 +40,6 @@ final class Version20250720131023 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE "user"');
+        $this->addSql('DROP TABLE public.user');
     }
 }

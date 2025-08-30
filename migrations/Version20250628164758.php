@@ -20,7 +20,7 @@ final class Version20250628164758 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('
-            CREATE TABLE file_upload (
+            CREATE TABLE public.file_upload (
                 id SERIAL NOT NULL, 
                 original_name VARCHAR(255) DEFAULT NULL, 
                 filename VARCHAR(255) DEFAULT NULL, 
@@ -36,6 +36,6 @@ final class Version20250628164758 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE file_upload');
+        $this->addSql('DROP TABLE public.file_upload');
     }
 }

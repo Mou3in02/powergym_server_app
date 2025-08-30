@@ -20,7 +20,7 @@ final class Version20250707182740 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('
-            CREATE TABLE file_extract (
+            CREATE TABLE public.file_extract (
                 id SERIAL NOT NULL, 
                 original_name VARCHAR(255) DEFAULT NULL, 
                 filename VARCHAR(255) DEFAULT NULL, 
@@ -36,6 +36,6 @@ final class Version20250707182740 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE file_extract');
+        $this->addSql('DROP TABLE public.file_extract');
     }
 }

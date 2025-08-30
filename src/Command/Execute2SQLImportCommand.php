@@ -82,7 +82,7 @@ class Execute2SQLImportCommand extends Command
             $this->em->persist($fileExecution);
 
             try {
-                $result = $this->dataLoader->executePsql($filePath, DataLoader::TMP_DATABASE_NAME, FileExecution::TYPE_IMPORT);
+                $this->dataLoader->executePsql($filePath, DataLoader::TMP_DATABASE_NAME, FileExecution::TYPE_IMPORT);
                 $extractedFile->setStatus(FileExtract::STATUS_FINISHED);
                 $endSQLTime = microtime(true);
                 $executionTime = $endSQLTime - $startSQLTime;
