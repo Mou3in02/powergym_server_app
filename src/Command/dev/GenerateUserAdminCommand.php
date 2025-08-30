@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\dev;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
-    name: 'app:generate-user-admin',
+    name: 'app-dev:generate-user-admin',
     description: 'Generate new user with admin role',
 )]
 class GenerateUserAdminCommand extends Command

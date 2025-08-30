@@ -61,10 +61,14 @@ class Execute3SQLExportCommand extends Command
 
         if (!$this->mainDB instanceof Connection) {
             $io->error('Main database connection is not set !');
+            $this->logger->error("Main database connection is not set !");
+
             return Command::FAILURE;
         }
         if (!$this->tmpDB instanceof Connection) {
             $io->error('Temporary database connection is not set !');
+            $this->logger->error("Temporary database connection is not set !");
+
             return Command::FAILURE;
         }
         try {
@@ -72,6 +76,7 @@ class Execute3SQLExportCommand extends Command
         } catch (Exception $e) {
             $io->error('Error getting table list');;
             $this->errorLoggerService->logError($e, Level::Critical);
+
             return Command::FAILURE;
         }
 
