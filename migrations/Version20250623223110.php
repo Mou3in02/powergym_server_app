@@ -14,13 +14,13 @@ final class Version20250623223110 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create file_import table';
+        return 'Create app_file_import table';
     }
 
     public function up(Schema $schema): void
     {
         $this->addSql('
-            CREATE TABLE public.file_execution (
+            CREATE TABLE public.app_file_execution (
                 id SERIAL PRIMARY KEY,
                 type VARCHAR(50) NOT NULL,
                 filename VARCHAR(255) DEFAULT NULL,
@@ -39,6 +39,6 @@ final class Version20250623223110 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE public.file_execution');
+        $this->addSql('DROP TABLE public.app_file_execution');
     }
 }

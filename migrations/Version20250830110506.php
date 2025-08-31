@@ -14,13 +14,13 @@ final class Version20250830110506 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create new table payment';
+        return 'Create new table app_payment';
     }
 
     public function up(Schema $schema): void
     {
         $this->addSql('
-            CREATE TABLE public.payment (
+            CREATE TABLE public.app_payment (
                 id SERIAL PRIMARY KEY,
                 external_id VARCHAR(100) NOT NULL,
                 pers_person_id varchar(100) NOT NULL,
@@ -36,6 +36,6 @@ final class Version20250830110506 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE public.payment');
+        $this->addSql('DROP TABLE public.app_payment');
     }
 }

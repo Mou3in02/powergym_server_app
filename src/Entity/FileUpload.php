@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'file_upload')]
+#[ORM\Table(name: 'app_file_upload')]
 class FileUpload
 {
     const STATUS_PENDING = 'PENDING';

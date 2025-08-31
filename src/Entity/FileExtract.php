@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'file_extract')]
+#[ORM\Table(name: 'app_file_extract')]
 class FileExtract
 {
     const STATUS_PENDING = 'PENDING';

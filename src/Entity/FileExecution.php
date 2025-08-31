@@ -7,7 +7,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FileExecutionRepository::class)]
-#[ORM\Table(name: 'file_execution')]
+#[ORM\Table(name: 'app_file_execution')]
 class FileExecution
 {
     const TYPE_IMPORT = 'TYPE_IMPORT';
