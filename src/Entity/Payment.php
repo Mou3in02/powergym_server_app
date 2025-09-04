@@ -36,6 +36,9 @@ class Payment
     #[ORM\Column]
     private ?\DateTime $endTime;
 
+    #[ORM\Column]
+    private int $days = 0;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?float $price = null;
 
@@ -142,4 +145,16 @@ class Payment
 
         return $this;
     }
+
+    public function getDays(): int
+    {
+        return $this->days;
+    }
+
+    public function setDays(int $days = 0): static
+    {
+        $this->days = $days;
+        return $this;
+    }
+
 }

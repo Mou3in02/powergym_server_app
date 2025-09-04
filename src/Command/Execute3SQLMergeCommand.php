@@ -26,15 +26,15 @@ use Symfony\Component\Finder\Finder;
 
 #[AllowDynamicProperties]
 #[AsCommand(name: 'app:merge-sql-script')]
-class Execute4SQLMergeCommand extends Command
+class Execute3SQLMergeCommand extends Command
 {
     public function __construct(
-        private readonly DataLoader                $dataLoader,
-        private readonly LoggerInterface           $logger,
-        private readonly Filesystem                $filesystem,
-        private readonly EntityManagerInterface    $em,
-        private readonly string                    $targetDirectory,
-        private readonly DatabaseConnectionFactory $databaseConnectionFactory,
+        private readonly DataLoader             $dataLoader,
+        private readonly LoggerInterface        $logger,
+        private readonly Filesystem             $filesystem,
+        private readonly EntityManagerInterface $em,
+        private readonly string                 $exportedDirectory,
+        DatabaseConnectionFactory               $databaseConnectionFactory,
     )
     {
         parent::__construct();
@@ -67,7 +67,7 @@ class Execute4SQLMergeCommand extends Command
         foreach ($executedFiles as $executedFolder) {
             $timestamp = $executedFolder->getFilename();
             // check exported directories
-            if (!$this->filesystem->exists($this->targetDirectory . '/' . $timestamp)) {
+            if (!$this->filesystem->exists($this->exportedDirectory . '/' . $timestamp)) {
                 $io->error("Exported tmp data directory does not exist: {$timestamp}");
                 $this->logger->error("Exported tmp data directory does not exist: {$timestamp}");
 
@@ -75,7 +75,7 @@ class Execute4SQLMergeCommand extends Command
             }
 
             $io->info('Merging folder - ' . $timestamp . ' ...');
-            $files = $this->getAllExportedFiles($this->targetDirectory . '/' . $timestamp);
+            $files = $this->getAllExportedFiles($this->exportedDirectory . '/' . $timestamp);
             $now = new \DateTime();
             $fileExecution = (new FileExecution())
                 ->setFilename('TMP_DATABASE')
@@ -280,6 +280,7 @@ class Execute4SQLMergeCommand extends Command
             ->setUpdateTime($updateTime)
             ->setStartTime($startTime)
             ->setEndTime($endTime)
+            ->setDays($inscriptionDays)
             ->setPrice($isHalfMonth ? Payment::PRICE_HALF_MONTH : Payment::PRICE_MONTH)
             ->setIsDeleted(false);
 

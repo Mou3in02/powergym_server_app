@@ -28,6 +28,7 @@ final class Version20250830110506 extends AbstractMigration
                 create_time TIMESTAMP NOT NULL,
                 start_time TIMESTAMP DEFAULT NULL,
                 end_time TIMESTAMP DEFAULT NULL,
+                days int NOT NULL DEFAULT 0,
                 price DECIMAL(10,2) NOT NULL DEFAULT 0,
                 is_deleted BOOLEAN NOT NULL DEFAULT false
             )

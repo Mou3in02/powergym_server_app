@@ -49,11 +49,8 @@ services:
     App\Command\Execute2SQLImportCommand:
         arguments:
             $decompressedDirectory: '%decompressed_file_upload_dir%'
+            $exportedDirectory: '%exported_tmp_data_dir%'
 
-    App\Command\Execute3SQLExportCommand:
+    App\Command\Execute3SQLMergeCommand:
         arguments:
-            $targetDirectory: '%exported_tmp_data_dir%'
-
-    App\Command\Execute4SQLMergeCommand:
-        arguments:
-            $targetDirectory: '%exported_tmp_data_dir%'
+            $exportedDirectory: '%exported_tmp_data_dir%'
