@@ -1,13 +1,11 @@
 <?php
 
 namespace App\DTO;
+
 readonly class AccPersonDTO
 {
     public function __construct(
         public string  $id,
-        public ?string $appId = null,
-        public ?string $bioTblId = null,
-        public ?string $companyId = null,
         public string  $createTime,
         public string  $createrCode,
         public string  $createrId,
@@ -19,12 +17,15 @@ readonly class AccPersonDTO
         public string  $updaterName,
         public bool    $delayPassage,
         public bool    $disabled,
-        public ?string $endTime,
         public bool    $isSetValidTime,
         public string  $persPersonId,
         public int     $privilege,
+        public int     $superAuth,
+        public ?string $endTime,
         public ?string $startTime,
-        public int     $superAuth
+        public ?string $appId = null,
+        public ?string $bioTblId = null,
+        public ?string $companyId = null,
     )
     {
     }

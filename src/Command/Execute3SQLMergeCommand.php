@@ -40,7 +40,6 @@ class Execute3SQLMergeCommand extends Command
         parent::__construct();
         $this->mainDB = $databaseConnectionFactory->getDefaultConnection();
         $this->tmpDB = $databaseConnectionFactory->getSecondConnection();
-
     }
 
     protected function configure()
@@ -266,13 +265,6 @@ class Execute3SQLMergeCommand extends Command
         $updateTime = (new \DateTime($accPersonRow->updateTime));
         $createTime = (new \DateTime($accPersonRow->createTime));
 
-        // Check is half or full month
-        // TODO: check more than month inscription
-        $isHalfMonth = false;
-        if ($inscriptionDays <= 20) {
-            $isHalfMonth = true;
-        }
-
         $newPayment = (new Payment())
             ->setExternalId($accPersonRow->id)
             ->setPersPersonId($accPersonRow->persPersonId)
@@ -281,7 +273,7 @@ class Execute3SQLMergeCommand extends Command
             ->setStartTime($startTime)
             ->setEndTime($endTime)
             ->setDays($inscriptionDays)
-            ->setPrice($isHalfMonth ? Payment::PRICE_HALF_MONTH : Payment::PRICE_MONTH)
+            ->setPrice(0)
             ->setIsDeleted(false);
 
         $this->em->persist($newPayment);

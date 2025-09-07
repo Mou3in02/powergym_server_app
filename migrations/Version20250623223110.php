@@ -32,7 +32,8 @@ final class Version20250623223110 extends AbstractMigration
                 execution_time_description VARCHAR(50) DEFAULT NULL,
                 start_at  VARCHAR(255) DEFAULT NULL,
                 end_at  VARCHAR(255) DEFAULT NULL,
-                is_deleted BOOLEAN NOT NULL DEFAULT false
+                is_deleted BOOLEAN NOT NULL DEFAULT false,
+                is_by_service BOOLEAN NOT NULL DEFAULT false
             )'
         );
     }

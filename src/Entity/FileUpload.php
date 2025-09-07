@@ -38,6 +38,9 @@ class FileUpload
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $status = null;
 
+    #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    private bool $isByService = true;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -126,4 +129,16 @@ class FileUpload
 
         return $this;
     }
+
+    public function isByService(): bool
+    {
+        return $this->isByService;
+    }
+
+    public function setIsByService(bool $isByService): FileUpload
+    {
+        $this->isByService = $isByService;
+        return $this;
+    }
+
 }

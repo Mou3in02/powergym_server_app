@@ -8,6 +8,7 @@ Power Gym is an all-in-one administration platform that streamlines membership, 
 - Composer & PHP >= 8.2
 - PHP Symfony framework
 - PosgresSQL database
+- 7-Zip library
 ## Environment Variables
 
 To run project, you will need to modify the following environment variables to your .env file

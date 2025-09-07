@@ -33,7 +33,7 @@ class FileUploader
         }
     }
 
-    public function upload(UploadedFile $file): string
+    public function upload(UploadedFile $file, bool $isService = true): string
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
@@ -44,7 +44,8 @@ class FileUploader
             ->setSize($file->getSize() ?? null)
             ->setSizeDescription(ByteConverter::formatBytes($file->getSize() ?? 0))
             ->setIsDeleted(false)
-            ->setUploadedAt(new DateTime());
+            ->setUploadedAt(new DateTime())
+            ->setIsByService($isService);
 
         try {
             $file->move($this->targetDirectory, $fileName);
