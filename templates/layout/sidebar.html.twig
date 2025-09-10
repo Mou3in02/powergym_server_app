@@ -1,9 +1,12 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
     <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex justify-content-center align-content-center">
+            <img src="{{ asset('images/logo.png') }}" alt="" style="width: 60px; height: auto">
+        </div>
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="info">
-                <a href="#" class="d-block"><i class="fas fa-user-circle mr-1"></i> {{ app.user.username }}</a>
+                <a href="#" class="d-block"># {{ app.user.username }}</a>
             </div>
         </div>
 
@@ -28,12 +31,14 @@
                         <p>Entreé</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ path('pers_access_stats_index') }}" class="nav-link">
-                        <i class="fas fa-chart-pie nav-icon"></i>
-                        <p>Entreé Statistiques </p>
-                    </a>
-                </li>
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <li class="nav-item">
+                        <a href="{{ path('pers_access_stats_index') }}" class="nav-link">
+                            <i class="fas fa-chart-pie nav-icon"></i>
+                            <p>Entreé Statistiques </p>
+                        </a>
+                    </li>
+                {% endif %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-edit"></i>
@@ -63,10 +68,18 @@
                         </li>
                     </ul>
                 </li>
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <li class="nav-item">
+                        <a href="{{ path('dashboard_admin_index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-user-lock"></i>
+                            <p>Administrateurs</p>
+                        </a>
+                    </li>
+                {% endif %}
                 <li class="nav-item">
-                    <a href="{{ path('dashboard_admin_index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-user-lock"></i>
-                        <p>Administrateurs</p>
+                    <a href="{{ path('app_payment_index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-money-bill-alt"></i>
+                        <p>Abonnements</p>
                     </a>
                 </li>
                 <li class="nav-item">
