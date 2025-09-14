@@ -9,12 +9,13 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
     name: 'app-dev:generate-user-admin',
-    description: 'Generate new user with admin role',
+    description: 'Generate new admin user roles',
 )]
 class GenerateUserAdminCommand extends Command
 {
@@ -53,10 +54,21 @@ class GenerateUserAdminCommand extends Command
             return Command::FAILURE;
         }
 
+        $helper = $this->getHelper('question');
+        // Create a choice question
+        $question = new ChoiceQuestion(
+            'Please select user role:',
+            [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN],
+            0
+        );
+        // Make it so invalid choices throw an error
+        $question->setErrorMessage('Choice %s is invalid !');
+        $choice = $helper->ask($input, $output, $question);
+
         $newUser = new User();
         $newUser->setUsername($username)
             ->setPassword($this->hasher->hashPassword($newUser, $password))
-            ->setRoles([User::ROLE_ADMIN])
+            ->setRoles([$choice])
             ->setCreatedAt(new \DateTime())
             ->setIsDeleted(false);
 

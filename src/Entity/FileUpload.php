@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use App\Repository\FileUploadRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: FileUploadRepository::class)]
 #[ORM\Table(name: 'app_file_upload')]
 class FileUpload
 {
