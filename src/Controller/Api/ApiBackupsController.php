@@ -18,9 +18,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
-#[isGranted("ROLE_ADMIN")]
+#[isGranted("ROLE_SERVICE")]
 #[Route('/api/backups')]
-class BackupsController extends AbstractController
+class ApiBackupsController extends AbstractController
 {
     private string $maxFileSizeUpload;
 

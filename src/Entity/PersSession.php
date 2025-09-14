@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use App\Repository\PersSessionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: PersSessionRepository::class)]
 #[ORM\Table(name: 'app_pers_session')]
 class PersSession
 {
