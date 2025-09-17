@@ -4,43 +4,45 @@ namespace App\SQL;
 
 class PersSessionSQL
 {
-    public static function getMonthlyChartBar(): string
-    {
-        return "
-                SELECT TO_CHAR(created_at, 'Day') AS day_label,
-                       TO_CHAR(created_at, 'YYYY-MM-DD') AS day_date,
-                       COUNT(*) AS total
-                FROM public.pers_session
-                WHERE created_at BETWEEN :start AND :end
-                GROUP BY day_label, day_date
-                ORDER BY day_date
-        ";
-    }
-
+    // 📊 Nombre de clients par semaine (groupé par jour)
     public static function getWeeklyChartBar(): string
     {
         return "
-                SELECT 
-                    TO_CHAR(created_at, 'MM') AS month_number,
-                    TO_CHAR(created_at, 'TMMonth') AS month_name,
-                    COUNT(*) AS total
-                FROM public.pers_session
-                GROUP BY TO_CHAR(created_at, 'MM'), TO_CHAR(created_at, 'TMMonth')
-                ORDER BY TO_CHAR(created_at, 'MM')::int
+            SELECT 
+                TRIM(TO_CHAR(ps.created_at, 'Day')) AS day_label,
+                COUNT(ps.id) AS total
+            FROM app_pers_session ps
+            WHERE ps.is_deleted = false
+              AND ps.created_at BETWEEN :start AND :end
+            GROUP BY day_label
         ";
     }
 
+    // 📊 Nombre de clients par mois
+    public static function getMonthlyChartBar(): string
+    {
+        return "
+            SELECT 
+                TO_CHAR(ps.created_at, 'MM') AS month_number,
+                COUNT(ps.id) AS total
+            FROM app_pers_session ps
+            WHERE ps.is_deleted = false
+            GROUP BY TO_CHAR(ps.created_at, 'MM')
+            ORDER BY TO_CHAR(ps.created_at, 'MM')::int
+        ";
+    }
+
+    // 📊 Somme totale des prix par mois
     public static function getTotalPriceChartBar(): string
     {
         return "
-                SELECT
-                TO_CHAR(created_at, 'MM') AS month_number,
-                TO_CHAR(created_at, 'TMMonth') AS month_name,
-                SUM(price) AS total_price
-            FROM pers_session
-            GROUP BY TO_CHAR(created_at, 'MM'), TO_CHAR(created_at, 'TMMonth')
-            ORDER BY TO_CHAR(created_at, 'MM')::int
+            SELECT 
+                TO_CHAR(ps.created_at, 'MM') AS month_number,
+                SUM(ps.price) AS total_price
+            FROM app_pers_session ps
+            WHERE ps.is_deleted = false
+            GROUP BY TO_CHAR(ps.created_at, 'MM')
+            ORDER BY TO_CHAR(ps.created_at, 'MM')::int
         ";
     }
-
 }

@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
 #[Route('/dashboard')]
 #[IsGranted("ROLE_ADMIN")]
 class PersSessionController extends AbstractController
@@ -56,7 +55,7 @@ class PersSessionController extends AbstractController
     #[Route('/pers-session/chart', name: 'pers_session_chart', methods: ['GET'])]
     public function chart(Request $request, Connection $connection): Response
     {
-        // Requête AJAX pour le graphique hebdomadaire
+        // 📊 Cas AJAX pour graphique hebdomadaire
         if ($request->query->has('date')) {
             $dateParam = $request->query->get('date');
 
@@ -68,23 +67,34 @@ class PersSessionController extends AbstractController
             $monday = (clone $selectedDate)->modify('monday this week')->setTime(0, 0, 0);
             $sunday = (clone $monday)->modify('+6 days')->setTime(23, 59, 59);
 
-            $sql = PersSessionSQL::getMonthlyChartBar();
-
+            $sql = PersSessionSQL::getWeeklyChartBar();
             $stmt = $connection->prepare($sql);
             $results = $stmt->executeQuery([
                 'start' => $monday->format('Y-m-d 00:00:00'),
                 'end' => $sunday->format('Y-m-d 23:59:59'),
             ])->fetchAllAssociative();
 
-            $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            $days = [
+                'Monday'    => 'Lundi',
+                'Tuesday'   => 'Mardi',
+                'Wednesday' => 'Mercredi',
+                'Thursday'  => 'Jeudi',
+                'Friday'    => 'Vendredi',
+                'Saturday'  => 'Samedi',
+                'Sunday'    => 'Dimanche'
+            ];
             $labels = [];
             $data = [];
 
-            foreach ($days as $day) {
-                $labels[] = ucfirst($day);
+            $labels = [];
+            $data = [];
+
+            foreach ($days as $eng => $fr) {
+                $labels[] = $fr;
                 $found = false;
                 foreach ($results as $row) {
-                    if (trim(strtolower($row['day_label'])) === strtolower($day)) {
+                    $dbDay = trim($row['day_label']); // Postgres ajoute des espaces
+                    if (strtolower($dbDay) === strtolower($eng)) {
                         $data[] = (int)$row['total'];
                         $found = true;
                         break;
@@ -95,12 +105,12 @@ class PersSessionController extends AbstractController
                 }
             }
 
+
             return new JsonResponse(['labels' => $labels, 'data' => $data]);
         }
 
-        // Requête mensuelle - nombre de clients
-        $sql = PersSessionSQL::getWeeklyChartBar();
-
+        // 📊 Graphique mensuel (nombre de clients)
+        $sql = PersSessionSQL::getMonthlyChartBar();
         $data = $connection->fetchAllAssociative($sql);
 
         $allMonths = [
@@ -122,9 +132,8 @@ class PersSessionController extends AbstractController
             $values[] = $dataMap[$num] ?? 0;
         }
 
-        // Requête mensuelle - total des prix
+        // 📊 Graphique mensuel (total des prix)
         $sqlPie = PersSessionSQL::getTotalPriceChartBar();
-
         $dataPie = $connection->fetchAllAssociative($sqlPie);
 
         $dataPieMap = [];
@@ -146,5 +155,4 @@ class PersSessionController extends AbstractController
             'pieValues' => json_encode($pieValues),
         ]);
     }
-
 }
