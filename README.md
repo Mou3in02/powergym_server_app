@@ -36,6 +36,10 @@ Execute migration files
 ```bash
   php bin/console d:m:m
 ```
+Insert service user
+```bash
+  php bin/console app-dev:generate-user-service
+```
 Generate first administrator account
 ```bash
   php bin/console app-dev:generate-user-admin -u your_username -p your_password
@@ -44,6 +48,7 @@ Run project
 ```bash
   symfony server:start
 ```
+
 After import backups you need to excute this commands to merge data to database
 ```bash
   php bin/console app:extract-uploaded-files

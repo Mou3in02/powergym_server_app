@@ -34,19 +34,21 @@
                             <a href="{{ path('pers_person_index') }}" class="small-box-footer">Plus info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-success">
-                            <div class="inner">
-                                <h3>{{ nbAdmin }}</h3>
-                                <p>Nombre des administrateurs</p>
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>{{ nbAdmin }}</h3>
+                                    <p>Nombre des administrateurs</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-stats-bars"></i>
+                                </div>
+                                <a href="{{ path('dashboard_admin_index') }}" class="small-box-footer">Plus info <i
+                                            class="fas fa-arrow-circle-right"></i></a>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-stats-bars"></i>
-                            </div>
-                            <a href="{{ path('dashboard_admin_index') }}" class="small-box-footer">Plus info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
-
-                    </div>
+                    {% endif %}
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-warning">
                             <div class="inner">
@@ -59,11 +61,12 @@
                             <a href="{{ path('pers_session_index') }}" class="small-box-footer">Plus info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
+
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-danger">
                             <div class="inner">
                                 <h3>{{ nbAccessToday }}</h3>
-                                <p>Client entreé</p>
+                                <p>Client entreé pour aujourd'hui</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-pie-graph"></i>

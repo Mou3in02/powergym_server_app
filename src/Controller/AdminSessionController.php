@@ -53,7 +53,8 @@ class AdminSessionController extends AbstractController
     #[Route('/admin', name: 'dashboard_admin_index', methods: ['GET'])]
     public function index(EntityManagerInterface $em): Response
     {
-        $admins = $em->getRepository(User::class)->findBy(['isDeleted' => false]);
+        $admins = $em->getRepository(User::class)->findByRole(User::ROLE_ADMIN);
+
         return $this->render('admin_session/index.html.twig', [
             'admins' => $admins,
         ]);
@@ -62,6 +63,10 @@ class AdminSessionController extends AbstractController
     #[Route('/admin/delete/{id}', name: 'dashboard_admin_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $em): Response
     {
+        if (in_array(User::ROLE_SUPER_ADMIN, $user->getRoles(), true)) {
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer cet administrateur.');
+            return $this->redirectToRoute('dashboard_admin_index');
+        }
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $user->setIsDeleted(true);
             $em->persist($user);

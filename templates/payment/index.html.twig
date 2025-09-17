@@ -1,0 +1,44 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Power GYM | Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <div class="wrapper">
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h4 class="h4 m-0">Les Abonnements</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="d-flex align-content-center justify-content-center">
+                                    <img alt="" src="{{ asset('images/under_construction.jpg') }}"
+                                         style="width: 500px; height: auto">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

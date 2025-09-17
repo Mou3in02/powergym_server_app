@@ -35,7 +35,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function findByRoles(string $role): int
+    public function countByRole(string $role): int
     {
         $users = $this->createQueryBuilder('u')
             ->andWhere('u.isDeleted = :isDeleted')
@@ -51,6 +51,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
         }
         return $nbAdmin;
+    }
+
+    /**
+     * @param string $role
+     * @return User[]
+     */
+    public function findByRole(string $role): array
+    {
+        $users = $this->createQueryBuilder('u')
+            ->andWhere('u.isDeleted = :isDeleted')
+            ->setParameters(new ArrayCollection([
+                new Parameter('isDeleted', false),
+            ]))
+            ->getQuery()
+            ->getResult();
+        $data = [];
+        foreach ($users as $user) {
+            if (in_array($role, $user->getRoles(), true)) {
+                $data[] = $user;
+            }
+        }
+        return $data;
     }
 
     //    /**
