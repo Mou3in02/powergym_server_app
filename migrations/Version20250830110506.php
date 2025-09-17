@@ -20,7 +20,7 @@ final class Version20250830110506 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('
-            CREATE TABLE public.app_payment (
+            CREATE TABLE IF NOT EXISTS public.app_payment (
                 id SERIAL PRIMARY KEY,
                 external_id VARCHAR(100) NOT NULL,
                 pers_person_id varchar(100) NOT NULL,

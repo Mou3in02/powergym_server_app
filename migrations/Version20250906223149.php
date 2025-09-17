@@ -20,7 +20,7 @@ final class Version20250906223149 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('
-            CREATE TABLE app_jwt_token (
+            CREATE TABLE IF NOT EXISTS app_jwt_token (
                 id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
                 token TEXT NOT NULL,

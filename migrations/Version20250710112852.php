@@ -21,7 +21,7 @@ final class Version20250710112852 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('
-            CREATE TABLE public.app_pers_session (
+            CREATE TABLE IF NOT EXISTS public.app_pers_session (
                 id SERIAL NOT NULL, 
                 id_client VARCHAR(100) DEFAULT NULL, 
                 first_name VARCHAR(255) NOT NULL, 

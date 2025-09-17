@@ -20,7 +20,7 @@ final class Version20250628164758 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('
-            CREATE TABLE public.app_file_upload (
+            CREATE TABLE IF NOT EXISTS public.app_file_upload (
                 id SERIAL NOT NULL, 
                 original_name VARCHAR(255) DEFAULT NULL, 
                 filename VARCHAR(255) DEFAULT NULL, 
