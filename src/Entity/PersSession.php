@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PersSessionRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PersSessionRepository::class)]
@@ -28,6 +29,8 @@ class PersSession
     #[ORM\Column(type: 'datetime')]
     private ?\DateTime $createdAt = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTime $date = null;
     #[ORM\Column(nullable: false, options: ['default' => false])]
     private ?bool $isDeleted = false;
 
@@ -85,6 +88,18 @@ class PersSession
     public function setCreatedAt(?\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getDate(): ?\DateTime
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTime $date): self
+    {
+        $this->date = $date;
+
         return $this;
     }
 
