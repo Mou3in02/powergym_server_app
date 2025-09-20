@@ -2,10 +2,9 @@
 
 {% block title %}AdminLTE 3 | Dashboard{% endblock %}
 
-
-  {% block stylesheets %}
-      {{ parent() }}
-  {% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
 
 {% block body %}
 
@@ -37,7 +36,10 @@
                                         <th>NOM</th>
                                         <th>Prénom</th>
                                         <th>Prix</th>
-                                        <th>Date</th>
+                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                            <th>Date de création</th>
+                                        {% endif %}
+                                        <th>Date de la séance</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -47,11 +49,16 @@
                                             <td>{{ seance.lastName }}</td>
                                             <td>{{ seance.firstName }}</td>
                                             <td>{{ seance.price }} DT</td>
-                                            <td>{{ seance.createdAt ? seance.createdAt|date('d/m/Y H:i') : '' }}</td>
+                                            {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                                <td>{{ seance.createdAt ? seance.createdAt|date('d/m/Y H:i') : '' }}</td>
+                                            {% endif %}
+                                            <td>{{ seance.date ? seance.date|date('d/m/Y H:i') : '' }}</td>
                                         </tr>
                                     {% else %}
                                         <tr>
-                                            <td colspan="5" class="text-center">Aucune séance trouvée.</td>
+                                            <td colspan="{% if 'ROLE_SUPER_ADMIN' in app.user.roles %}6{% else %}5{% endif %}" class="text-center">
+                                                Aucune séance trouvée.
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -78,13 +85,11 @@
     <script>
         $(function () {
             $('#pers_session_table').DataTable({
-                'responsive': true, 'lengthChange': false, 'autoWidth': false,
+                'responsive': true,
+                'lengthChange': false,
+                'autoWidth': false,
                 'buttons': ['copy', 'csv', 'excel', 'pdf', 'print', 'colvis'],
-            })
-                .buttons()
-                .container()
-                .appendTo('#pers_session_table_wrapper .col-md-6:eq(0)');
-
+            }).buttons().container().appendTo('#pers_session_table_wrapper .col-md-6:eq(0)');
 
             new DataTable('#pers_session_table', {
                 retrieve: true,
