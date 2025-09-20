@@ -30,10 +30,11 @@ class PersSessionType extends AbstractType
                     'Gratuit' => 0,
                 ],
             ])
-        ->add('date', DateTimeType::class, [
-        'widget' => 'single_text',
-        'label' => 'Date de la séance',
-    ]);
+            ->add('date', DateTimeType::class, [
+                'widget' => 'single_text',
+                'label' => 'Date de la séance',
+                'data' => new \DateTime('now') // Définit la date et l'heure actuelles par défaut
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
