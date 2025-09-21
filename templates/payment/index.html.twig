@@ -1,6 +1,6 @@
 {% extends 'base_dashboard.html.twig' %}
 
-{% block title %}Power GYM | Dashboard{% endblock %}
+{% block title %}Abonnements{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -8,37 +8,72 @@
 
 {% block body %}
 
-    <div class="wrapper">
-        <div class="content-wrapper">
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h4 class="h4 m-0">Les Abonnements</h4>
-                        </div>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h4 class="h4 m-0">Abonnements</h4>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <section class="content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="d-flex align-content-center justify-content-center">
-                                    <img alt="" src="{{ asset('images/under_construction.jpg') }}"
-                                         style="width: 500px; height: auto">
-                                </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="pers_person_table" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nom & Prénom</th>
+                                        <th>Nombre de jours</th>
+                                        <th>Date d'inscription du client</th>
+                                        <th>Date de début</th>
+                                        <th>Date de fin</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for session in sessions %}
+                                        <tr>
+                                            <td>{{ session.id }}</td>
+                                            <td>{{ session.persPerson.lastName }} {{ session.persPerson.name }}</td>
+                                            <td>{{ session.days }}</td>
+                                            <td>{{ session.createTime ? session.createTime|date('d/m/Y H:i') : '' }}</td>
+                                            <td>{{ session.startTime ? session.startTime|date('d/m/Y H:i') : '' }}</td>
+                                            <td>{{ session.endTime ? session.endTime|date('d/m/Y H:i') : '' }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">
+                                                Aucun abonnement trouvé.
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
     </div>
 
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+     <script src="{{ asset('js/pages/payment/index.js') }}"></script>
+
 {% endblock %}
