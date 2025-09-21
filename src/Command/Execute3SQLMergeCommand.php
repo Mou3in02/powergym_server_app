@@ -10,6 +10,7 @@ use App\Factory\DatabaseConnectionFactory;
 use App\helpers\TimeFormatter;
 use App\Service\DataLoader;
 use App\SQL\AccPersonSQL;
+use App\SQL\PersPersonSQL;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
@@ -223,6 +224,28 @@ class Execute3SQLMergeCommand extends Command
         $stmt->executeQuery();
     }
 
+    public function getPersFullName(string $persPersonId): ?string
+    {
+        $sqlScript = PersPersonSQL::getFullNameById();
+        $stmt = $this->mainDB->prepare($sqlScript);
+        $stmt->bindValue('pers_person_id', $persPersonId);
+        $result = $stmt->executeQuery();
+        $data = $result->fetchAssociative();
+
+        $fullName = null;
+        if (!$data) {
+            return $fullName;
+        }
+        if (!empty($data['name'])) {
+            $fullName = $data['name'];
+        }
+        if (!empty($data['last_name'])) {
+            $fullName .= ' ' . $data['last_name'];
+        }
+
+        return $fullName;
+    }
+
     protected function setAccPersonRow(Statement $stmt, AccPersonDTO $accPersonRow)
     {
         $stmt->bindValue('id', $accPersonRow->id);
@@ -265,9 +288,12 @@ class Execute3SQLMergeCommand extends Command
         $updateTime = (new \DateTime($accPersonRow->updateTime));
         $createTime = (new \DateTime($accPersonRow->createTime));
 
+        $fullName = $this->getPersFullName($accPersonRow->persPersonId);;
+
         $newPayment = (new Payment())
             ->setExternalId($accPersonRow->id)
             ->setPersPersonId($accPersonRow->persPersonId)
+            ->setName($fullName)
             ->setCreateTime($createTime)
             ->setUpdateTime($updateTime)
             ->setStartTime($startTime)
