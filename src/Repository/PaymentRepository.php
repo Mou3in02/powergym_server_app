@@ -16,15 +16,10 @@ class PaymentRepository extends ServiceEntityRepository
     public function findSessionsWithPerson(): array
     {
         return $this->createQueryBuilder('pay')
-            ->innerJoin('pay.persPerson', 'p') // correspond à la propriété $persPerson
-            ->addSelect('p')
             ->orderBy('pay.startTime', 'DESC')
             ->getQuery()
             ->getResult();
     }
-
-
-
 
 
 //    /**

@@ -3,55 +3,173 @@
 namespace App\Entity;
 
 use App\Repository\PaymentRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PaymentRepository::class)]
-#[ORM\Table(name: "app_payment")]
+#[ORM\Table(name: 'app_payment')]
 class Payment
 {
+    const PRICE_HALF_MONTH = 35;
+    const PRICE_MONTH = 60;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\Column(length: 100)]
-    private ?string $externalId = null;
+    private string $externalId;
 
-    #[ORM\ManyToOne(targetEntity: PersPerson::class)]
-    #[ORM\JoinColumn(name: "pers_person_id", referencedColumnName: "id", nullable: false)]
-    private ?PersPerson $persPerson = null;
+    #[ORM\Column(length: 100)]
+    private string $persPersonId;
 
-    #[ORM\Column(type: "datetime")]
-    private ?\DateTimeInterface $createTime = null;
+    #[ORM\Column]
+    private ?\DateTime $createTime;
 
-    #[ORM\Column(type: "datetime")]
-    private ?\DateTimeInterface $startTime = null;
+    #[ORM\Column]
+    private \DateTime $updateTime;
 
-    #[ORM\Column(type: "datetime")]
-    private ?\DateTimeInterface $endTime = null;
+    #[ORM\Column]
+    private ?\DateTime $startTime;
 
-    #[ORM\Column(type: "integer")]
-    private ?int $days = null;
+    #[ORM\Column]
+    private ?\DateTime $endTime;
 
-    // === Getters / setters ===
+    #[ORM\Column]
+    private int $days = 0;
 
-    public function getId(): ?int { return $this->id; }
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?float $price = null;
 
-    public function getExternalId(): ?string { return $this->externalId; }
-    public function setExternalId(string $externalId): self { $this->externalId = $externalId; return $this; }
+    #[ORM\Column]
+    private bool $isDeleted = false;
 
-    public function getPersPerson(): ?PersPerson { return $this->persPerson; }
-    public function setPersPerson(?PersPerson $persPerson): self { $this->persPerson = $persPerson; return $this; }
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $name = null;
 
-    public function getCreateTime(): ?\DateTimeInterface { return $this->createTime; }
-    public function setCreateTime(\DateTimeInterface $createTime): self { $this->createTime = $createTime; return $this; }
+    public function getId(): int
+    {
+        return $this->id;
+    }
 
-    public function getStartTime(): ?\DateTimeInterface { return $this->startTime; }
-    public function setStartTime(\DateTimeInterface $startTime): self { $this->startTime = $startTime; return $this; }
+    public function getPersPersonId(): string
+    {
+        return $this->persPersonId;
+    }
 
-    public function getEndTime(): ?\DateTimeInterface { return $this->endTime; }
-    public function setEndTime(\DateTimeInterface $endTime): self { $this->endTime = $endTime; return $this; }
+    public function setPersPersonId(string $persPersonId): static
+    {
+        $this->persPersonId = $persPersonId;
 
-    public function getDays(): ?int { return $this->days; }
-    public function setDays(int $days): self { $this->days = $days; return $this; }
+        return $this;
+    }
+
+    public function getExternalId(): string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(string $externalId): static
+    {
+        $this->externalId = $externalId;
+
+        return $this;
+    }
+
+    public function getCreateTime(): \DateTime
+    {
+        return $this->createTime;
+    }
+
+    public function setCreateTime(\DateTime $createTime): static
+    {
+        $this->createTime = $createTime;
+
+        return $this;
+    }
+
+    public function getUpdateTime(): \DateTime
+    {
+        return $this->updateTime;
+    }
+
+    public function setUpdateTime(\DateTime $updateTime): static
+    {
+        $this->updateTime = $updateTime;
+
+        return $this;
+    }
+
+    public function getStartTime(): ?\DateTime
+    {
+        return $this->startTime;
+    }
+
+    public function setStartTime(\DateTime $startTime): static
+    {
+        $this->startTime = $startTime;
+
+        return $this;
+    }
+
+    public function getEndTime(): ?\DateTime
+    {
+        return $this->endTime;
+    }
+
+    public function setEndTime(\DateTime $endTime): static
+    {
+        $this->endTime = $endTime;
+
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(bool $isDeleted): static
+    {
+        $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function setPrice(float $price): static
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getDays(): int
+    {
+        return $this->days;
+    }
+
+    public function setDays(int $days = 0): static
+    {
+        $this->days = $days;
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
 }
