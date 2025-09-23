@@ -40,7 +40,7 @@
                                     {% for session in sessions %}
                                         <tr>
                                             <td>{{ session.id }}</td>
-                                            <td>{{ session.persPerson.lastName }} {{ session.persPerson.name }}</td>
+                                            <td>{{ session.name }}</td>
                                             <td>{{ session.days }}</td>
                                             <td>{{ session.createTime ? session.createTime|date('d/m/Y H:i') : '' }}</td>
                                             <td>{{ session.startTime ? session.startTime|date('d/m/Y H:i') : '' }}</td>
@@ -74,6 +74,5 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
-     <script src="{{ asset('js/pages/payment/index.js') }}"></script>
-
+    <script src="{{ asset('js/pages/payment/index.js') }}"></script>
 {% endblock %}
