@@ -10,10 +10,12 @@ use App\Factory\DatabaseConnectionFactory;
 use App\helpers\TimeFormatter;
 use App\Service\DataLoader;
 use App\SQL\AccPersonSQL;
+use App\utils\UsedTables;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Tests\Models\Enums\UserStatus;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -85,13 +87,15 @@ class Execute3SQLMergeCommand extends Command
                 ->setStartAt($startTime)
                 ->setIsDeleted(false);
 
+
             foreach ($files as $file) {
+                // Skip unused tables
+                $tableName = explode('.', $file['filename'])[0];
+                if (!in_array($tableName, UsedTables::all(), true) || $tableName === UsedTables::TABLE_ACC_PERSON) {
+                    continue;
+                }
                 $io->text("Executing SQL file: <fg=magenta>{$file['filename']}</> ...");
-                // Get database connection parameters from Doctrine
                 try {
-                    if ($file['filename'] === 'acc_person.sql') {
-                        continue;
-                    }
                     $this->dataLoader->executePsql($file['path'], DataLoader::DATABASE_NAME, FileExecution::TYPE_MERGE);
                     $executedFolder->setStatus(FileExecution::STATUS_SUCCESS);
                     $fileExecution->setStatus(FileExecution::STATUS_SUCCESS);

@@ -2,6 +2,9 @@
 
 namespace App\SQL;
 
+/**
+ * @Info table "public.pers_person"
+ */
 class PersPersonSQL
 {
     static public function getAllInfo(): string
