@@ -6,9 +6,6 @@ use App\Entity\Payment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Payment>
- */
 class PaymentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,7 +13,16 @@ class PaymentRepository extends ServiceEntityRepository
         parent::__construct($registry, Payment::class);
     }
 
-    //    /**
+    public function findSessionsWithPerson(): array
+    {
+        return $this->createQueryBuilder('pay')
+            ->orderBy('pay.startTime', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+//    /**
     //     * @return Payment[] Returns an array of Payment objects
     //     */
     //    public function findByExampleField($value): array

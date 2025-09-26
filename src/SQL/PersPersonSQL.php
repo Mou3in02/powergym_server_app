@@ -24,4 +24,11 @@ class PersPersonSQL
             FROM public.pers_person;
         ';
     }
+
+    static public function getFullNameById(): string
+    {
+        return '
+            select name, last_name from public.pers_person where id = :pers_person_id;
+        ';
+    }
 }

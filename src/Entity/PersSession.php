@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PersSessionRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PersSessionRepository::class)]
@@ -14,6 +15,8 @@ class PersSession
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'created_by', nullable: true, onDelete: 'SET NULL', options: ['default' => null])]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -28,6 +31,8 @@ class PersSession
     #[ORM\Column(type: 'datetime')]
     private ?\DateTime $createdAt = null;
 
+    #[ORM\Column(type: 'datetime', name: 'date')]
+    private ?\DateTime $date = null;
     #[ORM\Column(nullable: false, options: ['default' => false])]
     private ?bool $isDeleted = false;
 
@@ -42,9 +47,10 @@ class PersSession
         return $this->createdBy;
     }
 
-    public function setCreatedBy(?User $createdBy): void
+    public function setCreatedBy(?User $createdBy): self
     {
         $this->createdBy = $createdBy;
+        return $this;
     }
 
     public function getFirstName(): ?string
@@ -52,9 +58,10 @@ class PersSession
         return $this->first_name;
     }
 
-    public function setFirstName(?string $first_name): void
+    public function setFirstName(?string $first_name): self
     {
         $this->first_name = $first_name;
+        return $this;
     }
 
     public function getLastName(): ?string
@@ -62,9 +69,10 @@ class PersSession
         return $this->last_name;
     }
 
-    public function setLastName(?string $last_name): void
+    public function setLastName(?string $last_name): self
     {
         $this->last_name = $last_name;
+        return $this;
     }
 
     public function getPrice(): ?int
@@ -72,9 +80,10 @@ class PersSession
         return $this->price;
     }
 
-    public function setPrice(?int $price): void
+    public function setPrice(?int $price): self
     {
         $this->price = $price;
+        return $this;
     }
 
     public function getCreatedAt(): ?\DateTime
@@ -85,6 +94,18 @@ class PersSession
     public function setCreatedAt(?\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getDate(): ?\DateTime
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTime $date): self
+    {
+        $this->date = $date;
+
         return $this;
     }
 

@@ -1,11 +1,10 @@
 {% extends 'base_dashboard.html.twig' %}
 
-{% block title %}AdminLTE 3 | Dashboard{% endblock %}
+{% block title %}Séances individuelles{% endblock %}
 
-
-  {% block stylesheets %}
-      {{ parent() }}
-  {% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
 
 {% block body %}
 
@@ -14,7 +13,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h4 class="h4 m-0">Séance individuelle</h4>
+                        <h4 class="h4 m-0">Séances individuelles</h4>
                     </div>
                 </div>
             </div>
@@ -37,7 +36,10 @@
                                         <th>NOM</th>
                                         <th>Prénom</th>
                                         <th>Prix</th>
-                                        <th>Date</th>
+                                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                            <th>Date de création</th>
+                                        {% endif %}
+                                        <th>Date de la séance</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -47,11 +49,16 @@
                                             <td>{{ seance.lastName }}</td>
                                             <td>{{ seance.firstName }}</td>
                                             <td>{{ seance.price }} DT</td>
-                                            <td>{{ seance.createdAt ? seance.createdAt|date('d/m/Y H:i') : '' }}</td>
+                                            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                                <td>{{ seance.createdAt ? seance.createdAt|date('d/m/Y H:i') : '' }}</td>
+                                            {% endif %}
+                                            <td>{{ seance.date ? seance.date|date('d/m/Y H:i') : '' }}</td>
                                         </tr>
                                     {% else %}
                                         <tr>
-                                            <td colspan="5" class="text-center">Aucune séance trouvée.</td>
+                                            <td colspan="{% if is_granted('ROLE_SUPER_ADMIN') %}6{% else %}5{% endif %}" class="text-center">
+                                                Aucune séance trouvée.
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -75,38 +82,5 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
-    <script>
-        $(function () {
-            $('#pers_session_table').DataTable({
-                'responsive': true, 'lengthChange': false, 'autoWidth': false,
-                'buttons': ['copy', 'csv', 'excel', 'pdf', 'print', 'colvis'],
-            })
-                .buttons()
-                .container()
-                .appendTo('#pers_session_table_wrapper .col-md-6:eq(0)');
-
-
-            new DataTable('#pers_session_table', {
-                retrieve: true,
-                language: {
-                    'processing': 'Traitement en cours...',
-                    'search': 'Rechercher&nbsp;:',
-                    'lengthMenu': 'Afficher _MENU_ éléments',
-                    'info': 'Affichage de l\'élément _START_ à _END_ sur _TOTAL_ éléments',
-                    'infoEmpty': 'Affichage de l\'élément 0 à 0 sur 0 élément',
-                    'infoFiltered': '(filtré de _MAX_ éléments au total)',
-                    'zeroRecords': 'Aucun élément à afficher',
-                    'emptyTable': 'Aucune donnée disponible dans le tableau',
-                    'paginate': {
-                        'first': 'Premier',
-                        'previous': 'Précédent',
-                        'next': 'Suivant',
-                        'last': 'Dernier',
-                    },
-                },
-                pageLength: 10,
-                responsive: true,
-            });
-        });
-    </script>
+    <script src="{{ asset('js/pages/pers_session/index.js') }}" ></script>
 {% endblock %}

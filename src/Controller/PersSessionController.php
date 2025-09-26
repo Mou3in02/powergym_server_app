@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PersSessionController extends AbstractController
 {
     #[Route('/pers-session/index', name: 'pers_session_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, Connection $connection): Response
     {
         $seances = $entityManager->getRepository(PersSession::class)->findBy(['isDeleted' => false]);
 
@@ -36,8 +36,7 @@ class PersSessionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $session->setCreatedBy($this->getUser());
-            $session->setCreatedAt(new \DateTime());
+            $session->setCreatedBy($this->getUser())->setCreatedAt(new \DateTime());
 
             $em->persist($session);
             $em->flush();
@@ -75,13 +74,13 @@ class PersSessionController extends AbstractController
             ])->fetchAllAssociative();
 
             $days = [
-                'Monday'    => 'Lundi',
-                'Tuesday'   => 'Mardi',
+                'Monday' => 'Lundi',
+                'Tuesday' => 'Mardi',
                 'Wednesday' => 'Mercredi',
-                'Thursday'  => 'Jeudi',
-                'Friday'    => 'Vendredi',
-                'Saturday'  => 'Samedi',
-                'Sunday'    => 'Dimanche'
+                'Thursday' => 'Jeudi',
+                'Friday' => 'Vendredi',
+                'Saturday' => 'Samedi',
+                'Sunday' => 'Dimanche'
             ];
             $labels = [];
             $data = [];

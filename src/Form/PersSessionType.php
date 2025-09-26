@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\PersSession;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -27,6 +29,11 @@ class PersSessionType extends AbstractType
                     '5000 TND' => 5000,
                     'Gratuit' => 0,
                 ],
+            ])
+            ->add('date', DateTimeType::class, [
+                'widget' => 'single_text',
+                'label' => 'Date de la séance',
+                'data' => new \DateTime('now') // Définit la date et l'heure actuelles par défaut
             ]);
     }
 
