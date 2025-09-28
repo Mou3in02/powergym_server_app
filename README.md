@@ -13,9 +13,9 @@ Power Gym is an all-in-one administration platform that streamlines membership, 
 
 To run project, you will need to modify the following environment variables to your .env file
 
-`DATABASE_URL`
+`DATABASE_URL=`
 
-`DATABASE_URL_TMP`
+`DATABASE_URL_TMP=`
 
 
 ## Installation
@@ -32,6 +32,15 @@ Install symfony dependencies
 ```bash
   composer install
 ```
+Create main & tmp databases
+```bash
+  php bin/console d:d:c
+  php bin/console d:d:c --connection=temp_db
+```
+Integrate database schema
+```bash
+  php bin/console app:create-database-schema
+```
 Execute migration files
 ```bash
   php bin/console d:m:m
@@ -40,7 +49,7 @@ Insert service user
 ```bash
   php bin/console app-dev:generate-user-service
 ```
-Generate first administrator account
+Generate the first administrator account
 ```bash
   php bin/console app-dev:generate-user-admin -u your_username -p your_password
 ```
@@ -49,7 +58,7 @@ Run project
   symfony server:start
 ```
 
-After import backups you need to excute this commands to merge data to database
+After import backups you need to execute this command to merge data to a database
 ```bash
   php bin/console app:extract-uploaded-files
   php bin/console app:import-sql-script

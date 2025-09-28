@@ -10,7 +10,7 @@ use Symfony\Component\Process\Process;
 
 class DataLoader
 {
-    const DATABASE_NAME = 'power_gym_database';
+    const MAIN_DATABASE_NAME = 'power_gym_database';
     const TMP_DATABASE_NAME = 'power_gym_database_tmp';
 
     public function __construct(

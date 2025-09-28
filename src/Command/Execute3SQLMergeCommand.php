@@ -99,7 +99,7 @@ class Execute3SQLMergeCommand extends Command
                 }
                 $io->text("Executing SQL file: <fg=magenta>{$file['filename']}</> ...");
                 try {
-                    $this->dataLoader->executePsql($file['path'], DataLoader::DATABASE_NAME, FileExecution::TYPE_MERGE);
+                    $this->dataLoader->executePsql($file['path'], DataLoader::MAIN_DATABASE_NAME, FileExecution::TYPE_MERGE);
                     $executedFolder->setStatus(FileExecution::STATUS_SUCCESS);
                     $fileExecution->setStatus(FileExecution::STATUS_SUCCESS);
                 } catch (Exception $e) {
