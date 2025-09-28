@@ -18,16 +18,18 @@ use Symfony\Component\Uid\Uuid;
 class FileUploader
 {
     private Filesystem $filesystem;
+    private string $targetDirectory;
 
     public function __construct
     (
-        private readonly string                 $targetDirectory,
         private readonly SluggerInterface       $slugger,
         private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface        $logger
+        private readonly LoggerInterface        $logger,
+        private readonly UploadsRoutingService  $uploadsRoutingService
     )
     {
         $this->filesystem = new Filesystem();
+        $this->targetDirectory = $this->uploadsRoutingService->getCompressedFileUploadDirPath();
         if (!$this->filesystem->exists($this->targetDirectory)) {
             $this->filesystem->mkdir($this->targetDirectory);
         }

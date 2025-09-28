@@ -9,6 +9,7 @@ use App\Entity\Payment;
 use App\Factory\DatabaseConnectionFactory;
 use App\helpers\TimeFormatter;
 use App\Service\DataLoader;
+use App\Service\UploadsRoutingService;
 use App\SQL\AccPersonSQL;
 use App\utils\UsedTables;
 use App\SQL\PersPersonSQL;
@@ -30,18 +31,21 @@ use Symfony\Component\Finder\Finder;
 #[AsCommand(name: 'app:merge-sql-script')]
 class Execute3SQLMergeCommand extends Command
 {
+    private string $exportedDirectory;
+
     public function __construct(
         private readonly DataLoader             $dataLoader,
         private readonly LoggerInterface        $logger,
         private readonly Filesystem             $filesystem,
         private readonly EntityManagerInterface $em,
-        private readonly string                 $exportedDirectory,
+        private readonly UploadsRoutingService $uploadsRoutingService,
         DatabaseConnectionFactory               $databaseConnectionFactory,
     )
     {
         parent::__construct();
         $this->mainDB = $databaseConnectionFactory->getDefaultConnection();
         $this->tmpDB = $databaseConnectionFactory->getSecondConnection();
+        $this->exportedDirectory = $this->uploadsRoutingService->getExportedTmpDataDirPath();
     }
 
     protected function configure()

@@ -8,6 +8,7 @@ use App\helpers\ByteConverter;
 use App\helpers\TimeFormatter;
 use App\Service\ErrorLoggerService;
 use App\Service\SevenZipExtractor;
+use App\Service\UploadsRoutingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Level;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -19,15 +20,19 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand('app:extract-uploaded-files')]
 class Execute1ExtractFilesCommand extends Command
 {
+    private string $compressedDirectory;
+    private string $decompressedDirectory;
+
     public function __construct(
         private readonly ErrorLoggerService     $logger,
         private readonly EntityManagerInterface $em,
         private readonly SevenZipExtractor      $sevenZipExtractor,
-        private string                          $compressedDirectory,
-        private string                          $decompressedDirectory,
+        private readonly UploadsRoutingService $uploadsRoutingService,
     )
     {
         parent::__construct();
+        $this->compressedDirectory = $this->uploadsRoutingService->getCompressedFileUploadDirPath();
+        $this->decompressedDirectory = $this->uploadsRoutingService->getDecompressedFileUploadDirPath();
     }
 
     protected function configure(): void

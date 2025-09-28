@@ -5,13 +5,20 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     max_file_size_upload: '%env(MAX_FILE_SIZE_UPLOAD)%'
-    compressed_file_extensions: '%env(COMPRESSED_FILE_EXTENSIONS)%'
-    decompressed_file_extensions: '%env(DECOMPRESSED_FILE_EXTENSIONS)%'
-    # directories paths
-    uploads_directory: '%kernel.project_dir%/src/uploads'
-    compressed_file_upload_dir: '%kernel.project_dir%/src/uploads/compressed'
-    decompressed_file_upload_dir: '%kernel.project_dir%/src/uploads/decompressed'
-    exported_tmp_data_dir: '%kernel.project_dir%/src/uploads/exported_tmp_data'
+
+    # DEV directories paths
+    dev_directories:
+        uploads_directory: '%kernel.project_dir%/src/uploads'
+        compressed_file_upload_dir: '%kernel.project_dir%/src/uploads/compressed'
+        decompressed_file_upload_dir: '%kernel.project_dir%/src/uploads/decompressed'
+        exported_tmp_data_dir: '%kernel.project_dir%/src/uploads/exported_tmp_data'
+
+    # PROD directories paths
+    prod_directories:
+        uploads_directory: /home/ubuntu/uploads
+        compressed_file_upload_dir: /home/ubuntu/uploads/compressed
+        decompressed_file_upload_dir: /home/ubuntu/uploads/decompressed
+        exported_tmp_data_dir: /home/ubuntu/uploads/exported_tmp_data'
 
 services:
     # default configuration for services in *this* file
@@ -30,27 +37,3 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    App\Service\FileUploader:
-        arguments:
-            $targetDirectory: '%compressed_file_upload_dir%'
-
-    App\Service\SevenZipExtractor:
-        arguments:
-            $targetDirectory: '%decompressed_file_upload_dir%'
-
-    # Commands
-
-    App\Command\Execute1ExtractFilesCommand:
-        arguments:
-            $compressedDirectory: '%compressed_file_upload_dir%'
-            $decompressedDirectory: '%decompressed_file_upload_dir%'
-
-    App\Command\Execute2SQLImportCommand:
-        arguments:
-            $decompressedDirectory: '%decompressed_file_upload_dir%'
-            $exportedDirectory: '%exported_tmp_data_dir%'
-
-    App\Command\Execute3SQLMergeCommand:
-        arguments:
-            $exportedDirectory: '%exported_tmp_data_dir%'

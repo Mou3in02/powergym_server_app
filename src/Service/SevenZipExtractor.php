@@ -8,10 +8,12 @@ use Symfony\Component\Filesystem\Filesystem;
 class SevenZipExtractor
 {
     private Filesystem $filesystem;
+    private string $targetDirectory;
 
-    public function __construct(private string $targetDirectory)
+    public function __construct(private readonly UploadsRoutingService  $uploadsRoutingService)
     {
         $this->filesystem = new Filesystem();
+        $this->targetDirectory = $this->uploadsRoutingService->getDecompressedFileUploadDirPath();
         if (!$this->filesystem->exists($this->targetDirectory)) {
             $this->filesystem->mkdir($this->targetDirectory);
         }

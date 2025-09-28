@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
-#[isGranted("ROLE_SERVICE")]
+#[isGranted('ROLE_SERVICE')]
 #[Route('/api/backups')]
 class ApiBackupsController extends AbstractController
 {

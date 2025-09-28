@@ -9,6 +9,7 @@ use App\helpers\ByteConverter;
 use App\helpers\TimeFormatter;
 use App\Service\DataLoader;
 use App\Service\ErrorLoggerService;
+use App\Service\UploadsRoutingService;
 use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,6 +29,8 @@ class Execute2SQLImportCommand extends Command
 {
     private Connection $mainDB;
     private Connection $tmpDB;
+    private string $decompressedDirectory;
+    private string $exportedDirectory;
 
     public function __construct(
         private readonly ErrorLoggerService     $errorLogger,
@@ -35,14 +38,15 @@ class Execute2SQLImportCommand extends Command
         private readonly Filesystem             $filesystem,
         private readonly DataLoader             $dataLoader,
         private readonly EntityManagerInterface $em,
+        private readonly UploadsRoutingService $uploadsRoutingService,
         DatabaseConnectionFactory               $databaseConnectionFactory,
-        private readonly string                 $decompressedDirectory,
-        private string                          $exportedDirectory
     )
     {
         parent::__construct();
         $this->mainDB = $databaseConnectionFactory->getDefaultConnection();
         $this->tmpDB = $databaseConnectionFactory->getSecondConnection();
+        $this->decompressedDirectory = $this->uploadsRoutingService->getDecompressedFileUploadDirPath();
+        $this->exportedDirectory = $this->uploadsRoutingService->getExportedTmpDataDirPath();
     }
 
     protected function configure()
