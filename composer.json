@@ -16,6 +16,7 @@
         "gemorroj/archive7z": "^5.7",
         "lexik/jwt-authentication-bundle": "^3.1",
         "phpdocumentor/reflection-docblock": "^5.6",
+        "symfony/apache-pack": "*",
         "symfony/asset": "6.4.*",
         "symfony/asset-mapper": "6.4.*",
         "symfony/console": "6.4.*",
