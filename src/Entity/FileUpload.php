@@ -39,7 +39,7 @@ class FileUpload
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $status = null;
 
-    #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    #[ORM\Column(name: 'is_by_service' ,type: 'boolean', nullable: false, options: ['default' => false])]
     private bool $isByService = true;
 
     public function getId(): ?int

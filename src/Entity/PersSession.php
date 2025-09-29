@@ -31,7 +31,7 @@ class PersSession
     #[ORM\Column(type: 'datetime')]
     private ?\DateTime $createdAt = null;
 
-    #[ORM\Column(type: 'datetime', name: 'date')]
+    #[ORM\Column(type: 'datetime', name: 'custom_date')]
     private ?\DateTime $date = null;
     #[ORM\Column(nullable: false, options: ['default' => false])]
     private ?bool $isDeleted = false;

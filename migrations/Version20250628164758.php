@@ -29,6 +29,7 @@ final class Version20250628164758 extends AbstractMigration
                 uploaded_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, 
                 is_deleted BOOLEAN DEFAULT NULL, 
                 status VARCHAR(50) DEFAULT NULL, 
+                is_by_service BOOLEAN NOT NULL DEFAULT false,
                 PRIMARY KEY(id)
             )'
         );

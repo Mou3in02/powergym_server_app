@@ -67,7 +67,7 @@ class ApiBackupsController extends AbstractController
         }
         // upload the file
         try {
-            $fileName = $fileUploader->upload($uploadedFile);
+            $fileName = $fileUploader->upload($uploadedFile, true);
             $this->logger->info('Backup data successfully uploaded ' . $fileName);
         } catch (Exception $e) {
             $this->errorLoggerService->logError($e, Level::Critical);
