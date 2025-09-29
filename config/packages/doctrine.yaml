@@ -30,6 +30,9 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+        # Add this configuration:
+        controller_resolver:
+            auto_mapping: false
 
 when@test:
     doctrine:
