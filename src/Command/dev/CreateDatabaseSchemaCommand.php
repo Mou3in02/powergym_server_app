@@ -77,7 +77,7 @@ class CreateDatabaseSchemaCommand extends Command
                 '-h', $host,
                 '-p', (string)$port,
                 '-U', $user,
-                '-d', 'db_test', // DataLoader::MAIN_DATABASE_NAME,
+                '-d', DataLoader::MAIN_DATABASE_NAME,
                 '-f', $this->filePath
             ];
 
@@ -90,7 +90,7 @@ class CreateDatabaseSchemaCommand extends Command
 
             $this->logger->info('Executing psql', [
                 'file' => $this->filePath,
-                'database' => 'db_test', // DataLoader::MAIN_DATABASE_NAME,
+                'database' => DataLoader::MAIN_DATABASE_NAME,
                 'host' => $host,
                 'port' => $port,
                 'user' => $user
