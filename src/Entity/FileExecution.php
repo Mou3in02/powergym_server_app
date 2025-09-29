@@ -55,6 +55,9 @@ class FileExecution
     #[ORM\Column(nullable: true)]
     private ?string $endAt = null;
 
+    #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    private bool $isByService = false;
+
     public function getId(): int
     {
         return $this->id;
@@ -187,5 +190,15 @@ class FileExecution
         return $this;
     }
 
+    public function isByService(): bool
+    {
+        return $this->isByService;
+    }
+
+    public function setIsByService(bool $isByService): FileExecution
+    {
+        $this->isByService = $isByService;
+        return $this;
+    }
 
 }
