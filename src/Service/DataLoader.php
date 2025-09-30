@@ -21,7 +21,7 @@ class DataLoader
     {
     }
 
-    public function executePsql(string $filePath, string $dbname, string $fileExecType): array
+    public function executePsql(string $filePath, string $dbname): array
     {
         if (!file_exists($filePath)) {
             throw new InvalidArgumentException("File does not exist: {$filePath}");

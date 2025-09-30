@@ -8,7 +8,6 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -17,7 +16,6 @@ use Symfony\Component\Uid\Uuid;
 
 class FileUploader
 {
-    private Filesystem $filesystem;
     private string $targetDirectory;
 
     public function __construct
@@ -28,11 +26,7 @@ class FileUploader
         private readonly UploadsRoutingService  $uploadsRoutingService
     )
     {
-        $this->filesystem = new Filesystem();
         $this->targetDirectory = $this->uploadsRoutingService->getCompressedFileUploadDirPath();
-        if (!$this->filesystem->exists($this->targetDirectory)) {
-            $this->filesystem->mkdir($this->targetDirectory);
-        }
     }
 
     public function upload(UploadedFile $file, bool $isService = false): string

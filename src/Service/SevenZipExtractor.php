@@ -14,9 +14,6 @@ class SevenZipExtractor
     {
         $this->filesystem = new Filesystem();
         $this->targetDirectory = $this->uploadsRoutingService->getDecompressedFileUploadDirPath();
-        if (!$this->filesystem->exists($this->targetDirectory)) {
-            $this->filesystem->mkdir($this->targetDirectory);
-        }
     }
 
     /**

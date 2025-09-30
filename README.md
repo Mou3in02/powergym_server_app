@@ -32,6 +32,10 @@ Install symfony dependencies
 ```bash
   composer install
 ```
+Setup JWT public & private keys
+```bash
+  php bin/console lexik:jwt:generate-keypair
+```
 Create main & tmp databases
 ```bash
   php bin/console d:d:c
@@ -48,6 +52,10 @@ Execute migration files
 Insert service user
 ```bash
   php bin/console app-dev:generate-user-service
+```
+Generate service JWT token
+```bash
+  php bin/console app-dev:generate-user-token
 ```
 Generate the first administrator account
 ```bash
