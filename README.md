@@ -72,6 +72,11 @@ After import backups you need to execute this command to merge data to a databas
   php bin/console app:import-sql-script
   php bin/console app:merge-sql-script
 ```
+Register jobs file with the system crontab (only for PRODUCTION)
+```bash
+  crontab /var/www/powergym_server_app/cron/powergym_jobs
+```
+
 ## Features
 - Member Management
 - Billing & Payments
