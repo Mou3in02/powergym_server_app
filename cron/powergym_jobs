@@ -1,5 +1,5 @@
 # ============================================
-# SYMFONY CRON JOB CONFIGURATION
+# START SYMFONY CRON JOB CONFIGURATION
 # ============================================
 
 # FIRST JOB: Run every hour at minute 0
@@ -13,3 +13,7 @@
 # THIRD JOB: Run every hour at minute 40
 # Executes at: 00:40, 01:40, 02:40, etc.
 40 * * * * cd /var/www/powergym_server_app && /usr/bin/php bin/console app:merge-sql-script >> /var/log/cron.log 2>&1
+
+# ============================================
+# END OF CRON JOB CONFIGURATION
+# ============================================
