@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Service\ErrorLoggerService;
 use App\Service\FileUploader;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Monolog\Level;
 use Psr\Log\LoggerInterface;
@@ -35,7 +36,7 @@ class ApiBackupsController extends AbstractController
     }
 
     #[Route('/upload', name: 'api_backups_upload_file', methods: ['POST'])]
-    public function uploadBackupData(Request $request, FileUploader $fileUploader): JsonResponse
+    public function uploadBackupData(Request $request, FileUploader $fileUploader, EntityManagerInterface $em): JsonResponse
     {
         $uploadedFile = $request->files->get('file');
         if (!$uploadedFile) {
@@ -67,8 +68,12 @@ class ApiBackupsController extends AbstractController
         }
         // upload the file
         try {
-            $fileName = $fileUploader->upload($uploadedFile, true);
-            $this->logger->info('Backup data successfully uploaded ' . $fileName);
+            $fileUpload = $fileUploader->upload($uploadedFile, true);
+            $fileUpload->setUploadedBy($this->getUser());
+            $em->persist($fileUpload);
+            $em->flush();
+            $this->logger->info('Backup data successfully uploaded ' . $fileUpload->getFilename());
+
         } catch (Exception $e) {
             $this->errorLoggerService->logError($e, Level::Critical);
             return $this->json([

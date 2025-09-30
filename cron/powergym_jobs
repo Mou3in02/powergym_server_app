@@ -4,15 +4,15 @@
 
 # FIRST JOB: Run every hour at minute 0
 # Executes at: 00:00, 01:00, 02:00, etc.
-0 * * * * cd /var/www/powergym_server_app && /usr/bin/php bin/console app:extract-uploaded-files >> /var/log/cron.log 2>&1
+0 * * * * cd /var/www/powergym_server_app && /usr/bin/php bin/console app:extract-uploaded-files >> /var/log/cron_script1.log 2>&1
 
 # SECOND JOB: Run every hour at minute 20
 # Executes at: 00:20, 01:20, 02:20, etc.
-20 * * * * cd /var/www/powergym_server_app && /usr/bin/php bin/console app:import-sql-script >> /var/log/cron.log 2>&1
+20 * * * * cd /var/www/powergym_server_app && /usr/bin/php bin/console app:import-sql-script >> /var/log/cron_script2.log 2>&1
 
 # THIRD JOB: Run every hour at minute 40
 # Executes at: 00:40, 01:40, 02:40, etc.
-40 * * * * cd /var/www/powergym_server_app && /usr/bin/php bin/console app:merge-sql-script >> /var/log/cron.log 2>&1
+40 * * * * cd /var/www/powergym_server_app && /usr/bin/php bin/console app:merge-sql-script >> /var/log/cron_script3.log 2>&1
 
 # ============================================
 # END OF CRON JOB CONFIGURATION

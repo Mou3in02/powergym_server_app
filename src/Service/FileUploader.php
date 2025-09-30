@@ -29,7 +29,7 @@ class FileUploader
         $this->targetDirectory = $this->uploadsRoutingService->getCompressedFileUploadDirPath();
     }
 
-    public function upload(UploadedFile $file, bool $isService = false): string
+    public function upload(UploadedFile $file, bool $isService = false): FileUpload
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
@@ -56,7 +56,7 @@ class FileUploader
             throw new Exception($e->getMessage(), $e->getCode(), $e);
         }
 
-        return $fileName;
+        return $fileUpload;
     }
 
 }

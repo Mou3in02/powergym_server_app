@@ -27,7 +27,7 @@ class Execute1ExtractFilesCommand extends Command
         private readonly ErrorLoggerService     $logger,
         private readonly EntityManagerInterface $em,
         private readonly SevenZipExtractor      $sevenZipExtractor,
-        private readonly UploadsRoutingService $uploadsRoutingService,
+        private readonly UploadsRoutingService  $uploadsRoutingService,
     )
     {
         parent::__construct();
@@ -47,18 +47,22 @@ class Execute1ExtractFilesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $startTime = microtime(true);
+        $now = new \DateTime();
+
+        $io->text('---------------------');
+        $io->text('[' . $now->format('Y-m-d H:i:s') . ']');
+        $io->text('---------------------');
 
         $uploadedFiles = $this->em->getRepository(FileUpload::class)->findBy([
             'status' => FileUpload::STATUS_PENDING,
             'isDeleted' => false
         ]);
 
-        $io->info('Starting extracting uploaded files ...');
         foreach ($uploadedFiles as $fileUploaded) {
             try {
                 $io->text('extracting file - ' . $fileUploaded->getFilename());
                 $fileExtract = (new FileExtract())
-                    ->setExtractedAt(new \DateTime())
+                    ->setExtractedAt($now)
                     ->setIsDeleted(false);
                 // extract uploaded file
                 $uploadedFilePath = $this->compressedDirectory . '/' . $fileUploaded->getFileName();
@@ -89,11 +93,11 @@ class Execute1ExtractFilesCommand extends Command
             }
             $this->em->persist($fileUploaded);
         }
-
         $this->em->flush();
-        $io->text('Number of extracted files processed: ' . count($uploadedFiles));
+
         $io->success('Extract files executed successfully');
-        $io->info('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
+        $io->text('Number of extracted files processed: ' . count($uploadedFiles));
+        $io->text('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
 
         return Command::SUCCESS;
     }

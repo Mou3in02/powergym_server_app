@@ -61,6 +61,10 @@ class Execute3SQLMergeCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $startTime = microtime(true);
 
+        $io->text('---------------------');
+        $io->text('[' . (new \DateTime())->format('Y-m-d H:i:s') . ']');
+        $io->text('---------------------');
+
         $executedFiles = $this->em->getRepository(FileExecution::class)->findBy([
             'type' => FileExecution::TYPE_EXPORT,
             'status' => FileExecution::STATUS_PENDING,
@@ -157,8 +161,8 @@ class Execute3SQLMergeCommand extends Command
         $io->text('Nb acc_person row inserted: ' . $nbRowInsert);
         $io->text('Nb acc_person row updated: ' . $nbRowUpdate);
         $io->text('Nb acc_person row not changed: ' . $nbRowNotChanged);
-        $io->text('Nb payment created: ' . $nbPayementCreated);
-        $io->info('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
+        $io->text('Nb app_payment created: ' . $nbPayementCreated);
+        $io->text('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
 
         return Command::SUCCESS;
     }

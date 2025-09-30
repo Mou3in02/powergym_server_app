@@ -46,7 +46,7 @@ class BackupsController extends AbstractController
     }
 
     #[Route('/upload', name: 'backups_upload_file', methods: ['POST'])]
-    public function uploadBackupData(Request $request, FileUploader $fileUploader): JsonResponse
+    public function uploadBackupData(Request $request, FileUploader $fileUploader, EntityManagerInterface $em): JsonResponse
     {
         $uploadedFile = $request->files->get('file');
         if (!$uploadedFile) {
@@ -78,8 +78,12 @@ class BackupsController extends AbstractController
         }
         // upload the file
         try {
-            $fileName = $fileUploader->upload($uploadedFile);
-            $this->logger->info('Backup data successfully uploaded ' . $fileName);
+            $fileUpload = $fileUploader->upload($uploadedFile);
+            $fileUpload->setUploadedBy($this->getUser());
+            $em->persist($fileUpload);
+            $em->flush();
+            $this->logger->info('Backup data successfully uploaded ' . $fileUpload->getFilename());
+
         } catch (Exception $e) {
             $this->errorLoggerService->logError($e, Level::Critical);
             return $this->json([

@@ -62,6 +62,10 @@ class Execute2SQLImportCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $startTime = microtime(true);
 
+        $io->text('---------------------');
+        $io->text('[' . (new \DateTime())->format('Y-m-d H:i:s') . ']');
+        $io->text('---------------------');
+
         if (!$this->mainDB instanceof Connection) {
             $errorMsq = 'Main database connection is not set !';
             $io->error($errorMsq);
@@ -174,9 +178,9 @@ class Execute2SQLImportCommand extends Command
             $this->em->flush();
         }
 
-        $io->text('Number of SQL executed files processed: ' . count($extractedFiles));
         $io->success('SQL file executed successfully');
-        $io->info('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
+        $io->text('Number of SQL executed files processed: ' . count($extractedFiles));
+        $io->text('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
 
         return Command::SUCCESS;
     }

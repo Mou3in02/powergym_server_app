@@ -40,7 +40,11 @@ class FileUpload
     private ?string $status = null;
 
     #[ORM\Column(name: 'is_by_service' ,type: 'boolean', nullable: false, options: ['default' => false])]
-    private bool $isByService = true;
+    private bool $isByService = false;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'uploaded_by', referencedColumnName: 'id', nullable: false, onDelete: 'SET NULL')]
+    private ?User $uploadedBy = null;
 
     public function getId(): ?int
     {
@@ -139,6 +143,18 @@ class FileUpload
     public function setIsByService(bool $isByService): FileUpload
     {
         $this->isByService = $isByService;
+        return $this;
+    }
+
+    public function getUploadedBy(): ?User
+    {
+        return $this->uploadedBy;
+    }
+
+    public function setUploadedBy(?User $uploadedBy): static
+    {
+        $this->uploadedBy = $uploadedBy;
+
         return $this;
     }
 
