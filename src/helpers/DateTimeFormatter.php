@@ -8,19 +8,22 @@ class DateTimeFormatter
 
     static public function format(\DateTime|string|null $datetime, ?string $format = null): string
     {
-        if (empty($datetime)) {
+        if ($datetime === null) {
             return '-';
         }
+
         if (!$datetime instanceof \DateTime) {
-            $datetime = new \DateTime($datetime);
+            try {
+                $datetime = new \DateTime($datetime);
+            } catch (\Exception $e) {
+                return '-';
+            }
         }
+
         if (!$format) {
-            return $datetime->format(self::STANDARD_DATETIME);
+            $format = self::STANDARD_DATETIME;
         }
-        try {
-            return $datetime->format($format);
-        } catch (\Exception $e) {
-            return $date->format(self::STANDARD_DATETIME);
-        }
+
+        return $datetime->format($format);
     }
 }
