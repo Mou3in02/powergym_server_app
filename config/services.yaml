@@ -19,7 +19,7 @@ parameters:
         uploads_directory: /var/www/uploads
         compressed_file_upload_dir: /var/www/uploads/compressed
         decompressed_file_upload_dir: /var/www/uploads/decompressed
-        exported_tmp_data_dir: /var/www/uploads/exported_tmp_data'
+        exported_tmp_data_dir: /var/www/uploads/exported_tmp_data
 
 services:
     # default configuration for services in *this* file

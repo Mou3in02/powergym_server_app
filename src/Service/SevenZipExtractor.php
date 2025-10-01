@@ -30,7 +30,6 @@ class SevenZipExtractor
             $this->filesystem->mkdir($destination);
         }
 
-        $data = [];
         try {
             $archive = new Archive7z($archiveFilePath);
             // Get a list of files in the archive

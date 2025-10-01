@@ -57,6 +57,7 @@ class Execute1ExtractFilesCommand extends Command
             'status' => FileUpload::STATUS_PENDING,
             'isDeleted' => false
         ]);
+        $nbFileExtracted = 0;
 
         foreach ($uploadedFiles as $fileUploaded) {
             try {
@@ -71,6 +72,7 @@ class Execute1ExtractFilesCommand extends Command
                     $errorMessage = 'Failed to extract empty uploaded file: ' . $fileUploaded->getFilename();
                     $io->error($errorMessage);
                     $this->logger->logError(new \Exception($errorMessage), Level::Critical);
+                    continue;
                 }
                 $extractedData = $result['files'][0];
                 $fileExtract->setFilename($extractedData['name'])
@@ -80,6 +82,7 @@ class Execute1ExtractFilesCommand extends Command
                 // If a file extracted without error
                 $fileExtract->setStatus(FileExtract::STATUS_PENDING);
                 $fileUploaded->setStatus(FileUpload::STATUS_FINISHED);
+                $nbFileExtracted++;
             } catch (\Exception $e) {
                 if (isset($fileExtract)) {
                     $fileExtract->setStatus(FileExtract::STATUS_ERROR);
@@ -95,8 +98,11 @@ class Execute1ExtractFilesCommand extends Command
         }
         $this->em->flush();
 
-        $io->success('Extract files executed successfully');
-        $io->text('Number of extracted files processed: ' . count($uploadedFiles));
+        if ($nbFileExtracted === count($uploadedFiles)) {
+            $io->success('All files extracted successfully !');
+        }
+        $io->text('Number of files : ' . count($uploadedFiles));;
+        $io->text('Number of extracted files processed: ' . $nbFileExtracted);
         $io->text('Execution time: ' . TimeFormatter::formatShort(microtime(true) - $startTime));
 
         return Command::SUCCESS;
