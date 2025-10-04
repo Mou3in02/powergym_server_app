@@ -76,7 +76,6 @@ class BackupsController extends AbstractController
                 'errors' => $errors
             ], Response::HTTP_BAD_REQUEST);
         }
-        // upload the file
         try {
             $fileUpload = $fileUploader->upload($uploadedFile);
             $fileUpload->setUploadedBy($this->getUser());
@@ -97,31 +96,28 @@ class BackupsController extends AbstractController
     }
 
     #[Route('/upload/delete', name: 'delete_backups_upload_file', methods: ['DELETE'])]
-    public function deleteUploadedFile(Request $request, FileUploadRepository $fileUploadRepository, EntityManagerInterface $em): JsonResponse
-    {
+    public function deleteUploadedFile(
+        Request $request,
+        FileUploadRepository $fileUploadRepository,
+        EntityManagerInterface $em
+    ): JsonResponse {
         $fileId = $request->query->get('fileId');
-        if (empty($fileId)){
-            return $this->json([
-                'message' => 'Bad request !',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-        if(!$this->isGranted('ROLE_SUPER_ADMIN')){
-            return $this->json([
-                'message' => 'You are not allowed to delete this file !',
-            ], Response::HTTP_FORBIDDEN);
-        }
+        if (empty($fileId)) return $this->json(['message'=>'Bad request !'], 400);
+
+        if(!$this->isGranted('ROLE_SUPER_ADMIN')) return $this->json(['message'=>'Permission refusée !'], 403);
+
         $uploadedFile = $fileUploadRepository->find($fileId);
-        if(!$uploadedFile){
-            return $this->json([
-                'message' => 'File not found !',
-            ], Response::HTTP_NOT_FOUND);
-        }
+        if(!$uploadedFile) return $this->json(['message'=>'Fichier introuvable !'], 404);
+
         $uploadedFile->setIsDeleted(true);
         $em->persist($uploadedFile);
         $em->flush();
+        $this->addFlash('success','Fichier supprimé avec succès.');
 
-        return $this->json([
-            'message' => 'File deleted successfully !',
-        ], Response::HTTP_OK);
+        return $this->json(['message'=>'Fichier supprimé avec succès.'], 200);
     }
+
+
+
+
 }
